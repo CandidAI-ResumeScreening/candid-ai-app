@@ -33,10 +33,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/features"
+                  href="/applyjobs"
                   className="text-gray-400 hover:text-white"
                 >
-                  Features
+                  Apply Jobs
                 </Link>
               </li>
             </ul>

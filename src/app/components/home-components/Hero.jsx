@@ -1,10 +1,12 @@
-// src/app/components/home-components/Hero.jsx
 import { ArrowRight, Search } from "lucide-react";
+import Image from "next/image";
+
 const Hero = () => {
   return (
     <div className="bg-gradient-to-r from-blue-50 to-indigo-100 pt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Text content */}
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               <span className="block text-blue-600">Smart, Fast, Fair</span>
@@ -23,15 +25,31 @@ const Hero = () => {
               </button>
             </div>
           </div>
+
+          {/* Illustration/Image */}
           <div className="hidden md:block">
-            <div className="relative h-64 w-full rounded-lg bg-white shadow-lg p-4 flex items-center justify-center">
-              <div className="text-center">
-                <div className="mx-auto w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <Search className="h-12 w-12 text-blue-600" />
+            <div className="relative h-64 w-full rounded-lg overflow-hidden shadow-lg">
+              {/* 🔧 Old icon-based block (commented for reference) */}
+
+              {/* <div className="relative h-64 w-full rounded-lg bg-white shadow-lg p-4 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="mx-auto w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                    <Search className="h-12 w-12 text-blue-600" />
+                  </div>
+                  <p className="text-gray-600">
+                    AI-powered resume screening visualization
+                  </p>
                 </div>
-                <p className="text-gray-600">
-                  AI-powered resume screening visualization
-                </p>
+              </div> */}
+
+              <div className="relative w-full h-120 rounded-lg overflow-hidden shadow-lg bg-white">
+                <Image
+                  src="/home-images/freepik-resume-person.jpeg"
+                  alt="AI-powered resume screening"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
             </div>
           </div>

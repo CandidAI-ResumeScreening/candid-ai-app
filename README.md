@@ -1,7 +1,7 @@
-# Frontend
-This repo contains the Frontend of the project
+# CandidAI App
+This repo contains the Implementation of the project in Next.js
 
-## UI flowchart
+## The UI flowchart
 ```mermaid
 flowchart TD
     A[Start: User Accesses CandidAI Web App] --> B[User Role]

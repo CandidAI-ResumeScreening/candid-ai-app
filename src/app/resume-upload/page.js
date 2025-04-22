@@ -56,7 +56,7 @@ export default function ResumeUpload() {
           <input
             type="file"
             id="resume"
-            accept=".pdf,.docx"
+            accept=".pdf,.docx,.txt,.png,.jpeg,.jpg "
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500
               file:mr-4 file:py-2 file:px-4

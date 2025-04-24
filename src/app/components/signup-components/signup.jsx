@@ -1,12 +1,27 @@
-// src/app/signup/page.js
+"use client";
 import Link from "next/link";
 import { ArrowRight, Mail, Lock, User } from "lucide-react";
+import { useState } from "react";
 
 export default function SignUp() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMatch, setPasswordMatch] = useState(null);
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordMatch(value === confirmPassword);
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    setPasswordMatch(password === value);
+  };
+
   return (
     <div>
-      {/* Navigation */}
-
       {/* Signup Form Section */}
       <div className="pt-12 md:pt-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -26,10 +41,7 @@ export default function SignUp() {
                 <form className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                      <label
-                        htmlFor="first_name"
-                        className="block text-sm font-medium text-gray-800"
-                      >
+                      <label className="block text-sm font-medium text-gray-800">
                         First Name
                       </label>
                       <div className="mt-1 relative">
@@ -37,10 +49,7 @@ export default function SignUp() {
                           <User className="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                          id="first_name"
-                          name="first_name"
                           type="text"
-                          autoComplete="given-name"
                           required
                           className="appearance-none block w-full pl-10 pr-3 py-2 border text-gray-800 border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           placeholder="First Name"
@@ -49,10 +58,7 @@ export default function SignUp() {
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="last_name"
-                        className="block text-sm font-medium text-gray-800"
-                      >
+                      <label className="block text-sm font-medium text-gray-800">
                         Last Name
                       </label>
                       <div className="mt-1 relative">
@@ -60,10 +66,7 @@ export default function SignUp() {
                           <User className="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                          id="last_name"
-                          name="last_name"
                           type="text"
-                          autoComplete="family-name"
                           required
                           className="appearance-none block w-full pl-10 pr-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           placeholder="Last Name"
@@ -73,10 +76,7 @@ export default function SignUp() {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-800"
-                    >
+                    <label className="block text-sm font-medium text-gray-800">
                       Email Address
                     </label>
                     <div className="mt-1 relative">
@@ -84,10 +84,7 @@ export default function SignUp() {
                         <Mail className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
-                        id="email"
-                        name="email"
                         type="email"
-                        autoComplete="email"
                         required
                         className="appearance-none block w-full pl-10 pr-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter your email"
@@ -95,60 +92,9 @@ export default function SignUp() {
                     </div>
                   </div>
 
-                  {/* <div>
-                    <label
-                      htmlFor="password"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Password
-                    </label>
-                    <div className="mt-1 relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="new-password"
-                        required
-                        className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Create a password"
-                      />
-                    </div>
-                    <p className="mt-1 text-xs text-gray-500">
-                      Password must be at least 8 characters long
-                    </p>
-                  </div> */}
-
-                  {/* <div>
-                    <label
-                      htmlFor="confirm_password"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Confirm Password
-                    </label>
-                    <div className="mt-1 relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        id="confirm_password"
-                        name="confirm_password"
-                        type="password"
-                        autoComplete="new-password"
-                        required
-                        className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Confirm your password"
-                      />
-                    </div>
-                  </div> */}
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                      <label
-                        htmlFor="password"
-                        className="block text-sm font-medium text-gray-800"
-                      >
+                      <label className="block text-sm font-medium text-gray-800">
                         Password
                       </label>
                       <div className="mt-1 relative">
@@ -156,11 +102,10 @@ export default function SignUp() {
                           <Lock className="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                          id="password"
-                          name="password"
                           type="password"
-                          autoComplete="new-password"
                           required
+                          value={password}
+                          onChange={handlePasswordChange}
                           className="appearance-none block w-full pl-10 pr-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           placeholder="Create a password"
                         />
@@ -171,10 +116,7 @@ export default function SignUp() {
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="confirm_password"
-                        className="block text-sm font-medium text-gray-800"
-                      >
+                      <label className="block text-sm font-medium text-gray-800">
                         Confirm Password
                       </label>
                       <div className="mt-1 relative">
@@ -182,15 +124,34 @@ export default function SignUp() {
                           <Lock className="h-5 w-5 text-gray-400" />
                         </div>
                         <input
-                          id="confirm_password"
-                          name="confirm_password"
                           type="password"
-                          autoComplete="new-password"
                           required
+                          value={confirmPassword}
+                          onChange={handleConfirmPasswordChange}
                           className="appearance-none block w-full pl-10 pr-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                           placeholder="Confirm your password"
                         />
                       </div>
+                      {passwordMatch === true && (
+                        <div className="text-green-500 flex items-center mt-1 text-sm">
+                          <img
+                            src="/signup-images/tick-1.svg"
+                            className="h-4 w-4 mr-1"
+                            alt="Tick"
+                          />
+                          Passwords match
+                        </div>
+                      )}
+                      {passwordMatch === false && (
+                        <div className="text-red-500 flex items-center mt-1 text-sm">
+                          <img
+                            src="/signup-images/wrong.svg"
+                            className="h-4 w-4 mr-1"
+                            alt="X"
+                          />
+                          Passwords do not match
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -233,65 +194,11 @@ export default function SignUp() {
                     </button>
                   </div>
                 </form>
-
-                {/* <div className="mt-6">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">
-                        Or sign up with
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 mt-6">
-                    <button
-                      type="button"
-                      className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12.545 10.239v3.821h5.445c-0.712 2.315-2.647 3.972-5.445 3.972-3.332 0-6.033-2.701-6.033-6.032s2.701-6.032 6.033-6.032c1.498 0 2.866 0.549 3.921 1.453l2.814-2.814c-1.787-1.676-4.19-2.707-6.735-2.707-5.522 0-10 4.478-10 10s4.478 10 10 10c8.396 0 10.249-7.85 9.426-11.748l-9.426 0.087z" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div> */}
-
-                <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-600">
-                    Already have an account?{" "}
-                    <Link
-                      href="/auth/login"
-                      className="font-medium text-blue-600 hover:text-blue-500"
-                    >
-                      Sign in
-                    </Link>
-                  </p>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Footer */}
     </div>
   );
 }

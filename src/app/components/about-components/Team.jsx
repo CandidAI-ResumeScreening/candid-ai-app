@@ -23,6 +23,8 @@ const Team = () => {
                   src="/team-members/ashraf.jpeg"
                   alt="Ashraf Hassan Anil"
                   fill
+                  sizes="160px"
+                  priority
                   className="object-cover rounded-full"
                 />
               </div>
@@ -38,11 +40,20 @@ const Team = () => {
             </div>
 
             <div className="flex flex-col items-center">
+              {/* <div className="w-40 h-40 relative rounded-full overflow-hidden mb-4">
+                <Image
+                  src="/team-members/nelson.jpeg"
+                  alt="Yusin Adan Ali"
+                  fill
+                  className="object-cover rounded-full"
+                />
+              </div> */}
               <div className="w-40 h-40 relative rounded-full overflow-hidden mb-4">
                 <Image
                   src="/team-members/nelson.jpeg"
                   alt="Yusin Adan Ali"
                   fill
+                  sizes="160px"
                   className="object-cover rounded-full"
                 />
               </div>

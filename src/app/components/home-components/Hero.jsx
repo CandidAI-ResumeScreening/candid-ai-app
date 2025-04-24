@@ -48,6 +48,7 @@ const Hero = () => {
                   alt="AI-powered resume screening"
                   fill
                   className="object-cover"
+                  sizes="(min-width: 1024px) 50vw, 0px"
                   priority
                 />
               </div>

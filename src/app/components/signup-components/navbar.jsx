@@ -47,7 +47,7 @@ const Navbar = () => {
           {/* Right: Button on Desktop */}
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             <Link href="/auth/login">
-              <button className="bg-white hover:bg-gray-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium border border-blue-600 mr-2">
+              <button className="bg-white hover:bg-gray-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium border border-blue-600 mr-2 cursor-pointer">
                 Sign In
               </button>
             </Link>

@@ -46,9 +46,9 @@ const Navbar = () => {
 
           {/* Right: Button on Desktop */}
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <Link href={"/auth/signup"}>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium cursor-pointer">
-                Sign Up
+            <Link href="/auth/login">
+              <button className="bg-white hover:bg-gray-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium border border-blue-600 mr-2">
+                Sign In
               </button>
             </Link>
           </div>
@@ -101,12 +101,12 @@ const Navbar = () => {
             >
               Contact
             </Link>
-            <Link href={"/auth/signup"}>
+            <Link href={"/auth/login"}>
               <button
                 onClick={() => setIsOpen(false)}
-                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium cursor-pointer"
+                className="w-full mt-2 bg-white hover:bg-gray-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium border border-blue-600 cursor-pointer"
               >
-                Sign Up
+                Sign In
               </button>
             </Link>
           </div>

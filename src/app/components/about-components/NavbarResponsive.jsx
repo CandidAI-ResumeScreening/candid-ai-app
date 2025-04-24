@@ -46,9 +46,11 @@ const Navbar = () => {
 
           {/* Right: Button on Desktop */}
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-              Demo Request
-            </button>
+            <Link href={"/auth/login"}>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                Sign In
+              </button>
+            </Link>
           </div>
 
           {/* Hamburger Menu on Mobile */}
@@ -99,12 +101,14 @@ const Navbar = () => {
             >
               Contact
             </Link>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-            >
-              Demo Request
-            </button>
+            <Link href={"/auth/login"}>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                Sign In
+              </button>
+            </Link>
           </div>
         </div>
       )}

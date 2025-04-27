@@ -1,7 +1,5 @@
 // src/app/dashboard/page.js
-import Link from "next/link";
 import DashboardLayout from "../components/dashboard/DashboardLayout.jsx";
-import DashboardHeader from "../components/dashboard/DashboardHeader.jsx";
 import RecentApplicationsCard from "../components/dashboard/RecentApplicationsCard.jsx";
 import StatsCard from "../components/dashboard/StatsCard.jsx";
 import JobListingsCard from "../components/dashboard/JobListingsCard.jsx";
@@ -51,8 +49,8 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <div className="py-6">
-        <DashboardHeader title="HR Dashboard" />
+      <div className="pt-2 pb-6">
+        {/* <DashboardHeader HRemail="Hrn2b@example.com" /> */}
 
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           {/* Stats Cards */}

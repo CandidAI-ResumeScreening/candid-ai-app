@@ -14,7 +14,7 @@ export async function POST(request) {
     }
 
     // Forward to Flask API
-    const flaskUrl = "http://localhost:5000/parse";
+    const flaskUrl = process.env.FLASK_API_URL; // Access the URL from .env.local
     const formDataToSend = new FormData();
     formDataToSend.append("resume", file);
 

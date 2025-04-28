@@ -11,45 +11,17 @@ export default function DashboardHeader() {
   const user = useUserStore((state) => state.user);
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-white shadow-sm sticky top-0 z-10">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
         <div className="w-full py-4 flex items-center justify-between border-b border-gray-200 lg:border-none">
           <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center">
+            <Link
+              href="/dashboard"
+              className="flex items-center cursor-pointer"
+            >
               <span className="text-2xl font-bold text-blue-600">CandidAI</span>
             </Link>
-            {/* <div className="hidden ml-10 space-x-8 lg:block">
-              <Link
-                href="/dashboard"
-                className="border-blue-500 border-b-2 pt-3 text-base text-gray-900 font-medium"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/dashboard/jobs"
-                className="text-base font-medium text-gray-700 hover:text-gray-900"
-              >
-                Jobs
-              </Link>
-              <Link
-                href="/dashboard/candidates"
-                className="text-base font-medium text-gray-700 hover:text-gray-900"
-              >
-                Candidates
-              </Link>
-              <Link
-                href="/dashboard/analytics"
-                className="text-base font-medium text-gray-700 hover:text-gray-900"
-              >
-                Analytics
-              </Link>
-              <Link
-                href="/dashboard/settings"
-                className="text-base font-medium text-gray-700 hover:text-gray-900"
-              >
-                Settings
-              </Link>
-            </div> */}
+
             <div className="hidden ml-10 space-x-8 lg:flex">
               <Link
                 href="/dashboard"
@@ -122,25 +94,31 @@ export default function DashboardHeader() {
           <div className="py-4 flex flex-wrap justify-center space-y-2 lg:hidden">
             <Link
               href="/dashboard"
-              className="w-full px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900"
+              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
             >
               Dashboard
             </Link>
             <Link
               href="/dashboard/jobs"
-              className="w-full px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900"
+              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
             >
               Jobs
             </Link>
             <Link
               href="/dashboard/candidates"
-              className="w-full px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900"
+              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
             >
               Candidates
             </Link>
             <Link
+              href="/dashboard/analytics"
+              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
+            >
+              Analytics
+            </Link>
+            <Link
               href="/dashboard/settings"
-              className="w-full px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900"
+              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
             >
               Settings
             </Link>

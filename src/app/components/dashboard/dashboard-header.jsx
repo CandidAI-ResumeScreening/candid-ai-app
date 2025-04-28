@@ -18,10 +18,10 @@ export default function DashboardHeader() {
             <Link href="/dashboard" className="flex items-center">
               <span className="text-2xl font-bold text-blue-600">CandidAI</span>
             </Link>
-            <div className="hidden ml-10 space-x-8 lg:block">
+            {/* <div className="hidden ml-10 space-x-8 lg:block">
               <Link
                 href="/dashboard"
-                className="text-base font-medium text-gray-700 hover:text-gray-900"
+                className="border-blue-500 border-b-2 pt-3 text-base text-gray-900 font-medium"
               >
                 Dashboard
               </Link>
@@ -38,8 +38,46 @@ export default function DashboardHeader() {
                 Candidates
               </Link>
               <Link
+                href="/dashboard/analytics"
+                className="text-base font-medium text-gray-700 hover:text-gray-900"
+              >
+                Analytics
+              </Link>
+              <Link
                 href="/dashboard/settings"
                 className="text-base font-medium text-gray-700 hover:text-gray-900"
+              >
+                Settings
+              </Link>
+            </div> */}
+            <div className="hidden ml-10 space-x-8 lg:flex">
+              <Link
+                href="/dashboard"
+                className="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/dashboard/jobs"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
+              >
+                Jobs
+              </Link>
+              <Link
+                href="/dashboard/candidates"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
+              >
+                Candidates
+              </Link>
+              <Link
+                href="/dashboard/analytics"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
+              >
+                Analytics
+              </Link>
+              <Link
+                href="/dashboard/settings"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
               >
                 Settings
               </Link>
@@ -47,19 +85,19 @@ export default function DashboardHeader() {
           </div>
 
           <div className="hidden lg:flex items-center space-x-6">
-            <button className="p-1 rounded-full text-gray-600 hover:text-gray-900 focus:outline-none">
+            {/* <button className="p-1 rounded-full text-gray-600 hover:text-gray-900 focus:outline-none">
               <span className="sr-only">View notifications</span>
               <Bell className="h-6 w-6" />
-            </button>
+            </button> */}
 
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                  <User className="h-5 w-5" />
+                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 font-medium">HR</span>
                 </div>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                <p className="text-sm font-medium pb-2 text-gray-800 group-hover:text-gray-900">
                   {user?.email || "HR User"}
                 </p>
                 <LogoutButton />

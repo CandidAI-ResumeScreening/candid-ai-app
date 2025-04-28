@@ -1,5 +1,6 @@
 import { ArrowRight, Search } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -17,9 +18,11 @@ const Hero = () => {
               automation.
             </p>
             <div className="mt-8 flex space-x-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-base font-medium flex items-center">
-                Get Started <ArrowRight className="ml-2 h-4 w-4" />
-              </button>
+              <Link href={"/auth/signup"}>
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-base font-medium flex items-center cursor-pointer">
+                  Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </Link>
               <button className="bg-white hover:bg-gray-50 text-blue-600 px-6 py-3 rounded-md text-base font-medium border border-blue-600">
                 Learn More
               </button>

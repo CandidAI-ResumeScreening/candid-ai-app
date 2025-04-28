@@ -14,6 +14,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "CandidAI",
   description: "AI Resume Screening webapp for HR professionals",
+  icons: {
+    icon: "/digital-art.svg", // /public path
+  },
 };
 
 export default function RootLayout({ children }) {

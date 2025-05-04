@@ -5,6 +5,67 @@ import Link from "next/link";
 import { Menu, Bell, User } from "lucide-react";
 import useUserStore from "@/store/useUserStore";
 import LogoutButton from "../logout-components/logout-button";
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+// Job post options
+const jobOptions = [
+  {
+    title: "Create Job Post",
+    href: "/dashboard/jobs/create",
+    description:
+      "Create an available job post that will appear on the applicants side on our home page for people to apply to.",
+  },
+  {
+    title: "View Job Posts",
+    href: "/dashboard/jobs/view",
+    description:
+      "Edit job posts, view jobs you've created and view the applicants that have applied under these jobs.",
+  },
+];
+
+// Candidate options
+const candidateOptions = [
+  {
+    title: "Recent Applications",
+    href: "/dashboard/candidates/applications",
+    description:
+      "See any recent applications for the jobs you posted and converse with our chatbot TalentTalk to get more insights on the candidates.",
+  },
+];
+
+// Account options
+const accountOptions = [
+  {
+    title: "Settings",
+    href: "/dashboard/account/settings",
+    description:
+      "Update your profile and account details to keep your information current.",
+  },
+  {
+    title: "Billing",
+    href: "/dashboard/account/billing",
+    description:
+      "Manage your payment information and update your billing details.",
+  },
+];
 
 export default function DashboardHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,47 +82,95 @@ export default function DashboardHeader() {
             >
               <span className="text-2xl font-bold text-blue-600">CandidAI</span>
             </Link>
+            <div className="hidden ml-10 lg:block">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "border-blue-500 text-gray-900 border-b-2 font-medium"
+                      )}
+                    >
+                      <Link href="/dashboard">Dashboard</Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
 
-            <div className="hidden ml-10 space-x-8 lg:flex">
-              <Link
-                href="/dashboard"
-                className="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/dashboard/jobs"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
-              >
-                Jobs
-              </Link>
-              <Link
-                href="/dashboard/candidates"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
-              >
-                Candidates
-              </Link>
-              <Link
-                href="/dashboard/analytics"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
-              >
-                Analytics
-              </Link>
-              <Link
-                href="/dashboard/settings"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium"
-              >
-                Settings
-              </Link>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-gray-500 hover:text-gray-700 font-medium">
+                      Jobs
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px]">
+                        {jobOptions.map((option) => (
+                          <ListItem
+                            key={option.title}
+                            title={option.title}
+                            href={option.href}
+                          >
+                            {option.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-gray-500 hover:text-gray-700 font-medium">
+                      Candidates
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4">
+                        {candidateOptions.map((option) => (
+                          <ListItem
+                            key={option.title}
+                            title={option.title}
+                            href={option.href}
+                          >
+                            {option.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "text-gray-500 hover:text-gray-700 font-medium"
+                      )}
+                    >
+                      <Link href="/dashboard/insights">Insights</Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-gray-500 hover:text-gray-700 font-medium">
+                      Account
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4">
+                        {accountOptions.map((option) => (
+                          <ListItem
+                            key={option.title}
+                            title={option.title}
+                            href={option.href}
+                          >
+                            {option.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
             </div>
           </div>
 
           <div className="hidden lg:flex items-center space-x-6">
-            {/* <button className="p-1 rounded-full text-gray-600 hover:text-gray-900 focus:outline-none">
-              <span className="sr-only">View notifications</span>
-              <Bell className="h-6 w-6" />
-            </button> */}
-
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
@@ -98,30 +207,80 @@ export default function DashboardHeader() {
             >
               Dashboard
             </Link>
+
+            {/* Jobs Accordion */}
+            <div className="w-full">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="jobs" className="border-0">
+                  <AccordionTrigger className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800 flex justify-between cursor-pointer">
+                    Jobs
+                  </AccordionTrigger>
+                  <AccordionContent className="border-0 pt-0">
+                    {jobOptions.map((option) => (
+                      <Link
+                        key={option.title}
+                        href={option.href}
+                        className="w-full px-8 py-2 text-base font-medium text-gray-600 hover:text-gray-800 block"
+                      >
+                        {option.title}
+                      </Link>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+
+            {/* Candidates Accordion */}
+            <div className="w-full">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="candidates" className="border-0">
+                  <AccordionTrigger className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800 flex justify-between cursor-pointer">
+                    Candidates
+                  </AccordionTrigger>
+                  <AccordionContent className="border-0 pt-0">
+                    {candidateOptions.map((option) => (
+                      <Link
+                        key={option.title}
+                        href={option.href}
+                        className="w-full px-8 py-2 text-base font-medium text-gray-600 hover:text-gray-800 block"
+                      >
+                        {option.title}
+                      </Link>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+
             <Link
-              href="/dashboard/jobs"
+              href="/dashboard/insights"
               className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
             >
-              Jobs
+              Insights
             </Link>
-            <Link
-              href="/dashboard/candidates"
-              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
-            >
-              Candidates
-            </Link>
-            <Link
-              href="/dashboard/analytics"
-              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
-            >
-              Analytics
-            </Link>
-            <Link
-              href="/dashboard/settings"
-              className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800"
-            >
-              Settings
-            </Link>
+
+            {/* Account Accordion */}
+            <div className="w-full">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="account" className="border-0">
+                  <AccordionTrigger className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800 flex justify-between cursor-pointer">
+                    Account
+                  </AccordionTrigger>
+                  <AccordionContent className="border-0 pt-0">
+                    {accountOptions.map((option) => (
+                      <Link
+                        key={option.title}
+                        href={option.href}
+                        className="w-full px-8 py-2 text-base font-medium text-gray-600 hover:text-gray-800 block"
+                      >
+                        {option.title}
+                      </Link>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+
             <div className="w-full px-4 py-2 flex items-center">
               <div className="flex-shrink-0">
                 <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
@@ -141,3 +300,28 @@ export default function DashboardHeader() {
     </header>
   );
 }
+
+const ListItem = React.forwardRef(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+              className
+            )}
+            {...props}
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              {children}
+            </p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
+ListItem.displayName = "ListItem";

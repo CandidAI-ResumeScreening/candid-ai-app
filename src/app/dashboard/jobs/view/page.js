@@ -14,8 +14,9 @@ export default function ViewJobsPage() {
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Add a state to track if we're on the client
   const [isClient, setIsClient] = useState(false);
+  const [activeTab, setActiveTab] = useState("active");
+  const [filteredJobs, setFilteredJobs] = useState([]);
 
   // Set isClient to true on the client side
   useEffect(() => {
@@ -50,6 +51,37 @@ export default function ViewJobsPage() {
     }
   }, [user, isClient]);
 
+  // Filter jobs based on active tab
+  useEffect(() => {
+    if (!jobs.length) {
+      setFilteredJobs([]);
+      return;
+    }
+
+    const today = new Date();
+
+    switch (activeTab) {
+      case "active":
+        // Show jobs with "active" status and deadline in the future
+        setFilteredJobs(
+          jobs.filter(
+            (job) => job.status === "active" && new Date(job.deadline) >= today
+          )
+        );
+        break;
+      case "cancelled":
+        // Show jobs with "closed" status
+        setFilteredJobs(jobs.filter((job) => job.status === "closed"));
+        break;
+      case "expired":
+        // Show jobs with deadline in the past
+        setFilteredJobs(jobs.filter((job) => new Date(job.deadline) < today));
+        break;
+      default:
+        setFilteredJobs(jobs);
+    }
+  }, [jobs, activeTab]);
+
   // Calculate days remaining until deadline
   const getDaysRemaining = (deadline) => {
     const deadlineDate = new Date(deadline);
@@ -66,7 +98,15 @@ export default function ViewJobsPage() {
   };
 
   // Get status badge color
-  const getStatusBadgeColor = (status) => {
+  const getStatusBadgeColor = (status, deadline) => {
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+
+    // If the deadline has passed for an active job
+    if (status === "active" && deadlineDate < today) {
+      return "bg-yellow-100 text-yellow-800"; // Expired
+    }
+
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -77,6 +117,19 @@ export default function ViewJobsPage() {
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  // Get status label
+  const getStatusLabel = (status, deadline) => {
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+
+    // If the deadline has passed for an active job
+    if (status === "active" && deadlineDate < today) {
+      return "Expired";
+    }
+
+    return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
   // Always render the same initial structure for both server and client
@@ -142,6 +195,42 @@ export default function ViewJobsPage() {
                 </Link>
               </div>
 
+              {/* Tab Navigation */}
+              <div className="mb-6 border-b border-gray-200">
+                <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                  <button
+                    onClick={() => setActiveTab("active")}
+                    className={`${
+                      activeTab === "active"
+                        ? "border-blue-500 text-blue-600"
+                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                  >
+                    Active
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("cancelled")}
+                    className={`${
+                      activeTab === "cancelled"
+                        ? "border-blue-500 text-blue-600"
+                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                  >
+                    Cancelled
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("expired")}
+                    className={`${
+                      activeTab === "expired"
+                        ? "border-blue-500 text-blue-600"
+                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                  >
+                    Expired
+                  </button>
+                </nav>
+              </div>
+
               {isLoading ? (
                 <div className="flex justify-center py-12">
                   <svg
@@ -169,9 +258,15 @@ export default function ViewJobsPage() {
                 <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
                   {error}
                 </div>
-              ) : jobs.length === 0 ? (
+              ) : filteredJobs.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500 mb-4">No job posts found</p>
+                  <p className="text-gray-500 mb-4">
+                    {activeTab === "active"
+                      ? "No active job posts found"
+                      : activeTab === "cancelled"
+                      ? "No cancelled job posts found"
+                      : "No expired job posts found"}
+                  </p>
                   <Link href="/dashboard/jobs/create">
                     <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                       <Plus className="h-4 w-4 mr-2" />
@@ -223,7 +318,7 @@ export default function ViewJobsPage() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {jobs.map((job) => (
+                      {filteredJobs.map((job) => (
                         <tr key={job._id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900">
@@ -244,7 +339,11 @@ export default function ViewJobsPage() {
                               </div>
                             </div>
                             <div className="text-xs text-gray-500">
-                              {getDaysRemaining(job.deadline)} days remaining
+                              {getDaysRemaining(job.deadline) > 0
+                                ? `${getDaysRemaining(
+                                    job.deadline
+                                  )} days remaining`
+                                : "Deadline passed"}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -258,11 +357,11 @@ export default function ViewJobsPage() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(
-                                job.status
+                                job.status,
+                                job.deadline
                               )}`}
                             >
-                              {job.status.charAt(0).toUpperCase() +
-                                job.status.slice(1)}
+                              {getStatusLabel(job.status, job.deadline)}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -285,6 +384,143 @@ export default function ViewJobsPage() {
                               >
                                 <Edit className="h-5 w-5" />
                               </button>
+                              {job.status === "active" && (
+                                <button
+                                  title="Cancel Job"
+                                  className="text-yellow-600 hover:text-yellow-900"
+                                  onClick={async () => {
+                                    if (
+                                      window.confirm(
+                                        "Are you sure you want to cancel this job?"
+                                      )
+                                    ) {
+                                      try {
+                                        const response = await fetch(
+                                          `/api/jobs/${job._id}/status`,
+                                          {
+                                            method: "PATCH",
+                                            headers: {
+                                              "Content-Type":
+                                                "application/json",
+                                            },
+                                            body: JSON.stringify({
+                                              status: "closed",
+                                            }),
+                                          }
+                                        );
+
+                                        if (!response.ok) {
+                                          throw new Error(
+                                            "Failed to cancel job"
+                                          );
+                                        }
+
+                                        // Update the job in the state
+                                        setJobs(
+                                          jobs.map((j) =>
+                                            j._id === job._id
+                                              ? { ...j, status: "closed" }
+                                              : j
+                                          )
+                                        );
+                                      } catch (err) {
+                                        console.error(
+                                          "Error cancelling job:",
+                                          err
+                                        );
+                                        alert(
+                                          "Failed to cancel job. Please try again."
+                                        );
+                                      }
+                                    }
+                                  }}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="h-5 w-5"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                  </svg>
+                                </button>
+                              )}
+                              {job.status === "closed" && (
+                                <button
+                                  title="Activate Job"
+                                  className="text-green-600 hover:text-green-900"
+                                  onClick={async () => {
+                                    if (
+                                      window.confirm(
+                                        "Are you sure you want to activate this job?"
+                                      )
+                                    ) {
+                                      try {
+                                        const response = await fetch(
+                                          `/api/jobs/${job._id}/status`,
+                                          {
+                                            method: "PATCH",
+                                            headers: {
+                                              "Content-Type":
+                                                "application/json",
+                                            },
+                                            body: JSON.stringify({
+                                              status: "active",
+                                            }),
+                                          }
+                                        );
+
+                                        if (!response.ok) {
+                                          throw new Error(
+                                            "Failed to activate job"
+                                          );
+                                        }
+
+                                        // Update the job in the state
+                                        setJobs(
+                                          jobs.map((j) =>
+                                            j._id === job._id
+                                              ? { ...j, status: "active" }
+                                              : j
+                                          )
+                                        );
+                                      } catch (err) {
+                                        console.error(
+                                          "Error activating job:",
+                                          err
+                                        );
+                                        alert(
+                                          "Failed to activate job. Please try again."
+                                        );
+                                      }
+                                    }
+                                  }}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="h-5 w-5"
+                                  >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                  </svg>
+                                </button>
+                              )}
                               <button
                                 title="Delete Job"
                                 className="text-red-600 hover:text-red-900"

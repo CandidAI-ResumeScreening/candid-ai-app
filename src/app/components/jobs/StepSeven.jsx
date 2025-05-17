@@ -242,6 +242,7 @@ export default function StepSeven() {
       <FormButtons
         showSubmit={true}
         showReset={true}
+        showNext={false}
         onSubmit={handleSubmit}
         isLoading={isLoading}
         error={error}

@@ -1,27 +1,33 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import DashboardHeader from "../components/dashboard/dashboard-header";
 import useUserStore from "@/store/useUserStore";
-import Stats from "../components/dashboard/Stats";
+import useJobStore from "@/store/useJobStore";
+import DashboardHeader from "@/app/components/dashboard/dashboard-header";
+import JobFormStepper from "@/app/components/jobs/JobFormStepper";
+import StepOne from "@/app/components/jobs/StepOne";
+import StepTwo from "@/app/components/jobs/StepTwo";
+import StepThree from "@/app/components/jobs/StepThree";
+import StepFour from "@/app/components/jobs/StepFour";
+import StepFive from "@/app/components/jobs/StepFive";
+import StepSix from "@/app/components/jobs/StepSix";
+import StepSeven from "@/app/components/jobs/StepSeven";
+import SuccessDialog from "@/app/components/jobs/SuccessDialog";
 
-// Import other dashboard components
-import RecentApplicationsCard from "../components/dashboard/RecentApplicationsCard";
-import JobListingsCard from "../components/dashboard/JobListingsCard";
-import ChatbotCard from "../components/dashboard/ChatbotCard";
-import UpcomingInterviewsCard from "../components/dashboard/UpcomingInterviewsCard";
-import CandidateInsightsCard from "../components/dashboard/CandidateInsightsCard";
-
-export default function DashboardPage() {
+export default function CreateJobPage() {
   const router = useRouter();
   const { user, isLoggedIn } = useUserStore();
+  const { currentStep, submitSuccess, reset } = useJobStore();
   // Add a state to track if we're on the client
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     // Set isClient to true on the client side
     setIsClient(true);
-  }, []);
+    // Reset form on initial load
+    reset();
+  }, [reset]);
 
   // Always render the same basic structure
   return (
@@ -71,44 +77,31 @@ export default function DashboardPage() {
             </div>
           ) : (
             // Authenticated - show content
-            <>
-              {/* Welcome Message and Stats */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Welcome, {user?.firstname || "HR User"}!
-                </h1>
-                <p className="mt-2 text-gray-600">
-                  This is your CandidAI dashboard where you can manage your
-                  hiring process.
-                </p>
+            <div className="bg-white shadow-sm rounded-lg p-6 md:p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-6">
+                Create New Job Post
+              </h1>
 
-                {/* Stats Section */}
-                <div className="mt-6">
-                  <Stats />
-                </div>
+              {/* Stepper */}
+              <JobFormStepper />
+
+              {/* Form Steps */}
+              <div className="mt-8">
+                {currentStep === 1 && <StepOne />}
+                {currentStep === 2 && <StepTwo />}
+                {currentStep === 3 && <StepThree />}
+                {currentStep === 4 && <StepFour />}
+                {currentStep === 5 && <StepFive />}
+                {currentStep === 6 && <StepSix />}
+                {currentStep === 7 && <StepSeven />}
               </div>
-
-              {/* Main Dashboard Content */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-                {/* Left Column */}
-                <div className="lg:col-span-2 space-y-6">
-                  <RecentApplicationsCard />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CandidateInsightsCard />
-                    <UpcomingInterviewsCard />
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-6">
-                  <ChatbotCard />
-                  <JobListingsCard />
-                </div>
-              </div>
-            </>
+            </div>
           )}
         </div>
       </main>
+
+      {/* Success Dialog */}
+      {submitSuccess && <SuccessDialog />}
     </div>
   );
 }

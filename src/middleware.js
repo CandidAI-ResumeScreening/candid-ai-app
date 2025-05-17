@@ -15,6 +15,11 @@ export function middleware(request) {
   const authPaths = ["/auth/login", "/auth/signup"];
   const isAuthPath = authPaths.some((path) => pathname === path);
 
+  // Skip middleware for API routes
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
   // If trying to access protected route without token, redirect to login
   if (isProtectedPath && !token) {
     const url = new URL("/auth/login", request.url);
@@ -31,5 +36,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/login", "/auth/signup"],
+  matcher: ["/dashboard/:path*", "/auth/login", "/auth/signup", "/api/:path*"],
 };

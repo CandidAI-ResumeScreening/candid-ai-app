@@ -48,7 +48,7 @@ const getAuthFromRequest = async () => {
 export async function GET(request, context) {
   try {
     // Get ID from params - access directly without destructuring
-    const id = context.params.id;
+    const { id } = await context.params;
 
     // Get authenticated user
     const user = await getAuthFromRequest();

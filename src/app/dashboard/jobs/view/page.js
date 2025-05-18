@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { Edit, Trash2, Eye, Clock, Users, Plus } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Eye,
+  Clock,
+  Users,
+  Plus,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 import useUserStore from "@/store/useUserStore";
 import DashboardHeader from "@/app/components/jobs/dashboard-header";
@@ -350,7 +358,7 @@ export default function ViewJobsPage() {
                             <div className="flex items-center">
                               <Users className="h-4 w-4 text-gray-400 mr-1" />
                               <span className="text-sm text-gray-900">
-                                {job.applications}
+                                {job.applications || 0}
                               </span>
                             </div>
                           </td>
@@ -366,24 +374,39 @@ export default function ViewJobsPage() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex justify-end space-x-2">
-                              <button
-                                title="View Applications"
-                                className="text-blue-600 hover:text-blue-900"
-                                onClick={() =>
-                                  router.push(`/dashboard/jobs/${job._id}`)
-                                }
+                              {/* View Job Details */}
+                              <Link href={`/dashboard/jobs/${job._id}`}>
+                                <button
+                                  title="View Details"
+                                  className="text-blue-600 hover:text-blue-900"
+                                >
+                                  <Eye className="h-5 w-5" />
+                                </button>
+                              </Link>
+
+                              {/* View Applicants - New Button */}
+                              <Link
+                                href={`/dashboard/jobs/${job._id}/applicants`}
                               >
-                                <Eye className="h-5 w-5" />
-                              </button>
-                              <button
-                                title="Edit Job"
-                                className="text-indigo-600 hover:text-indigo-900"
-                                onClick={() =>
-                                  router.push(`/dashboard/jobs/edit/${job._id}`)
-                                }
-                              >
-                                <Edit className="h-5 w-5" />
-                              </button>
+                                <button
+                                  title="View Applicants"
+                                  className="text-blue-600 hover:text-blue-900"
+                                >
+                                  <Users className="h-5 w-5" />
+                                </button>
+                              </Link>
+
+                              {/* Edit Job */}
+                              <Link href={`/dashboard/jobs/edit/${job._id}`}>
+                                <button
+                                  title="Edit Job"
+                                  className="text-indigo-600 hover:text-indigo-900"
+                                >
+                                  <Edit className="h-5 w-5" />
+                                </button>
+                              </Link>
+
+                              {/* Status Change Buttons */}
                               {job.status === "active" && (
                                 <button
                                   title="Cancel Job"
@@ -521,6 +544,8 @@ export default function ViewJobsPage() {
                                   </svg>
                                 </button>
                               )}
+
+                              {/* Delete Job */}
                               <button
                                 title="Delete Job"
                                 className="text-red-600 hover:text-red-900"

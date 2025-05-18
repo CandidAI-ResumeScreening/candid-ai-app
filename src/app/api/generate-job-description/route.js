@@ -33,18 +33,15 @@ export async function POST(request) {
     const client = new AzureOpenAI(options);
 
     // Create system prompt for job description generation
-    const systemPrompt = `You are an expert HR consultant specializing in creating professional job descriptions.
-Your task is to create a detailed, well-structured job description based on the information provided.
-Format your response with clear sections for:
-1. About the Company
-2. Job Responsibilities
-3. Required Qualifications
-4. Benefits and Perks
+    const systemPrompt = `You are an expert HR consultant specializing in creating concise job descriptions.
 
-Use bullet points where appropriate to improve readability.
-Keep the description concise, professional, and engaging.
-Do not include any information not provided in the user's request.
-Do not add any explanatory notes or annotations - just provide the job description.`;
+Your task is to generate a professional job description in no more than two paragraphs. Include the following:
+- A brief introduction about the company
+- The key requirements for the job in terms of education, skills, and experience
+- The main roles and responsibilities of the position
+- The expected salary (if provided)
+
+Write in full sentences with a clear and engaging tone. Do not use bullet points or headings. Do not include any content beyond what the user provides.`;
 
     // Send request to Azure OpenAI
     const response = await client.chat.completions.create({

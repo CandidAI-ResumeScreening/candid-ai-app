@@ -73,25 +73,19 @@ export default function StepFive() {
   const buildJobDescriptionPrompt = () => {
     const educationInfo = getFormattedEducationInfo();
 
-    return `Create a professional job description for a ${title} position at ${companyName}.
-Category: ${category || "Not specified"}
-Location: ${location || "Not specified"}
-Salary: ${salary || "Not specified"}
-Required Skills: ${skills.length > 0 ? skills.join(", ") : "Not specified"}
-Experience Level: ${experienceLevel || "Not specified"}
-Years of Experience: ${yearsOfExperience || "Not specified"}
-Minimum Education: ${educationLevel || "Not specified"}${
+    return `Write a concise and professional job description for a ${title} position at ${companyName}. 
+  Category: ${category || "Not specified"}
+  Location: ${location || "Not specified"}
+  Salary: ${salary || "Not specified"}
+  Required Skills: ${skills.length > 0 ? skills.join(", ") : "Not specified"}
+  Experience Level: ${experienceLevel || "Not specified"}
+  Years of Experience: ${yearsOfExperience || "Not specified"}
+  Minimum Education: ${educationLevel || "Not specified"}${
       fieldOfStudy ? ` in ${fieldOfStudy}` : ""
     }
-${educationInfo ? educationInfo : ""}
-
-Format the description with clear sections for:
-1. About the Company (brief, less than 2 lines)
-2. Job Responsibilities 
-3. Required Qualifications
-4. Benefits and Perks
-
-Please use bullet points where appropriate. Keep it concise, professional, and engaging. The job post should be formal, professional, precise and brief.`;
+  ${educationInfo ? educationInfo : ""}
+  
+  The description should be written in full sentences without headings or bullet points.Just number the paragraphs. Include a brief introduction about the company, the key job requirements (education, skills, and experience), the main responsibilities, and the expected salary if provided. Keep the entire description under two paragraphs. Use a formal and professional tone.`;
   };
 
   // Generate job description with AI

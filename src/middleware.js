@@ -15,8 +15,20 @@ export function middleware(request) {
   const authPaths = ["/auth/login", "/auth/signup"];
   const isAuthPath = authPaths.some((path) => pathname === path);
 
-  // Skip middleware for API routes
-  if (pathname.startsWith("/api/")) {
+  // Public paths that don't need the auth check
+  const publicPaths = ["/applyjobs", "/api/public", "/api/parse"];
+  const isPublicPath = publicPaths.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`)
+  );
+
+  // Skip middleware for API routes except auth-related ones
+  // This allows /api/public paths to work without auth
+  if (pathname.startsWith("/api/") && !pathname.startsWith("/api/hr/")) {
+    return NextResponse.next();
+  }
+
+  // Allow public paths without authentication
+  if (isPublicPath) {
     return NextResponse.next();
   }
 
@@ -36,5 +48,11 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/login", "/auth/signup", "/api/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/auth/login",
+    "/auth/signup",
+    "/applyjobs/:path*",
+    "/api/:path*",
+  ],
 };

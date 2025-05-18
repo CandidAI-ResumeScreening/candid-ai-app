@@ -33,10 +33,6 @@ export default function JobApplyPage({ params }) {
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
   const [fileError, setFileError] = useState(null);
-  const [parsedData, setParsedData] = useState(null);
-  const [parsingLoading, setParsingLoading] = useState(false);
-  const [parsingError, setParsingError] = useState(null);
-  const [parsingSuccess, setParsingSuccess] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [applicationSuccess, setApplicationSuccess] = useState(null);
@@ -78,9 +74,9 @@ export default function JobApplyPage({ params }) {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFileError(null);
-    setParsedData(null);
-    setParsingSuccess(false);
-    setParsingError(null);
+    setSubmitError(null);
+    setApplicationSuccess(null);
+    setScoringResult(null);
 
     // Validate file
     if (!selectedFile) {
@@ -113,89 +109,73 @@ export default function JobApplyPage({ params }) {
     setFile(selectedFile);
   };
 
-  // Parse resume
-  const handleParseResume = async () => {
-    if (!file) {
-      setFileError("Please select a file to upload");
-      return;
-    }
-
-    try {
-      setParsingLoading(true);
-      setParsingError(null);
-      setParsedData(null);
-      setParsingSuccess(false);
-
-      const formData = new FormData();
-      formData.append("resume", file);
-
-      const response = await fetch("/api/parse", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to parse resume");
-      }
-
-      const data = await response.json();
-      setParsedData(data);
-      setParsingSuccess(true);
-    } catch (err) {
-      console.error("Error parsing resume:", err);
-      setParsingError(err.message || "Failed to parse resume");
-    } finally {
-      setParsingLoading(false);
-    }
-  };
-
   // Submit application
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!file || !parsedData || !job) {
-      setSubmitError("Missing required information");
+    if (!file || !job) {
+      setSubmitError("Please select a resume file to upload");
       return;
     }
 
     try {
       setSubmitLoading(true);
       setSubmitError(null);
+      setApplicationSuccess(null);
 
-      const formData = new FormData();
-      formData.append("resume", file);
-      formData.append("jobId", job._id);
-      formData.append("parsedData", JSON.stringify(parsedData));
+      // Step 1: Parse the resume with the parse API
+      const parseFormData = new FormData();
+      parseFormData.append("resume", file);
 
-      const response = await fetch("/api/public/apply", {
+      const parseResponse = await fetch("/api/parse", {
         method: "POST",
-        body: formData,
+        body: parseFormData,
       });
 
-      if (!response.ok) {
+      if (!parseResponse.ok) {
         const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to parse resume");
+      }
+
+      const parsedData = await parseResponse.json();
+
+      if (!parsedData) {
+        throw new Error("Failed to extract information from resume");
+      }
+
+      // Step 2: Submit application with parsed data and job ID
+      const applicationFormData = new FormData();
+      applicationFormData.append("resume", file);
+      applicationFormData.append("jobId", job._id);
+      applicationFormData.append("parsedData", JSON.stringify(parsedData));
+
+      const applicationResponse = await fetch("/api/public/apply", {
+        method: "POST",
+        body: applicationFormData,
+      });
+
+      if (!applicationResponse.ok) {
+        const errorData = await applicationResponse.json();
         throw new Error(errorData.message || "Failed to submit application");
       }
 
-      const data = await response.json();
-      setApplicationSuccess(data.message);
+      const data = await applicationResponse.json();
+      setApplicationSuccess(
+        data.message || "Application submitted successfully!"
+      );
       setScoringResult({
         score: data.score,
         thresholdPass: data.thresholdPass,
         grade: data.grade,
       });
 
-      // Reset form state
-      setFile(null);
-      setParsedData(null);
-      setParsingSuccess(false);
-
       // Scroll to the top to show success message
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error("Error submitting application:", err);
-      setSubmitError(err.message || "Failed to submit application");
+      setSubmitError(
+        err.message || "Failed to submit application. Please try again."
+      );
     } finally {
       setSubmitLoading(false);
     }
@@ -240,10 +220,14 @@ export default function JobApplyPage({ params }) {
                       Application submitted successfully
                     </p>
                   </div>
-                  <p className="text-sm mt-2">
-                    Thank you for your application! You'll be notified if you're
-                    selected for the next stage.
-                  </p>
+                  {scoringResult && (
+                    <div className="mt-2">
+                      <p className="mt-3 text-sm">
+                        Thank you for your application! You'll be notified if
+                        you're selected for the next stage.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -400,58 +384,17 @@ export default function JobApplyPage({ params }) {
                         )}
                       </div>
 
-                      {/* Parse Resume */}
-                      <div className="mb-6">
-                        <button
-                          type="button"
-                          onClick={handleParseResume}
-                          disabled={!file || parsingLoading}
-                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
-                        >
-                          {parsingLoading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Parsing Resume...
-                            </>
-                          ) : (
-                            "Parse Resume"
-                          )}
-                        </button>
-                      </div>
-
-                      {/* Parsing Status */}
-                      {parsingError && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-6">
-                          <div className="flex items-center">
-                            <AlertTriangle className="h-5 w-5 mr-2" />
-                            <p>{parsingError}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {parsingSuccess && (
-                        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md mb-6">
-                          <div className="flex items-center">
-                            <Check className="h-5 w-5 mr-2" />
-                            <p>
-                              Resume parsed successfully! You can now submit
-                              your application.
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
                       {/* Submit Button */}
                       <div>
                         <button
                           type="submit"
-                          disabled={!parsedData || submitLoading}
-                          className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                          disabled={!file || submitLoading}
+                          className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
                         >
                           {submitLoading ? (
                             <>
                               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Submitting Application...
+                              Processing Application...
                             </>
                           ) : (
                             "Submit Application"

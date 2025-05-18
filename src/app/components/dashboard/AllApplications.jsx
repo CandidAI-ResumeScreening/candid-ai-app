@@ -435,7 +435,7 @@ export default function AllApplications() {
         </div>
       </main>
 
-      {/* Candidate Details Sidebar */}
+      {/* Candidate Details Modal - Centered */}
       {showDetails && selectedApplication && (
         <div className="fixed inset-0 overflow-hidden z-20">
           <div className="absolute inset-0 overflow-hidden">
@@ -443,252 +443,250 @@ export default function AllApplications() {
               className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
               onClick={() => setShowDetails(false)}
             ></div>
-            <div className="fixed inset-y-0 right-0 pl-10 max-w-full flex">
-              <div className="relative w-screen max-w-md">
-                <div className="h-full flex flex-col bg-white shadow-xl overflow-y-auto">
-                  {/* Header */}
-                  <div className="px-4 py-6 bg-blue-600 sm:px-6">
-                    <div className="flex items-start justify-between">
-                      <h2
-                        className="text-lg font-medium text-white"
-                        id="slide-over-heading"
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <div className="relative max-w-md w-full bg-white shadow-xl overflow-y-auto rounded-lg max-h-[90vh]">
+                {/* Header */}
+                <div className="px-4 py-6 bg-blue-600 sm:px-6 sticky top-0 z-10">
+                  <div className="flex items-start justify-between">
+                    <h2
+                      className="text-lg font-medium text-white"
+                      id="slide-over-heading"
+                    >
+                      Candidate Details
+                    </h2>
+                    <div className="ml-3 h-7 flex items-center">
+                      <button
+                        onClick={() => setShowDetails(false)}
+                        className="bg-blue-600 rounded-md text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                       >
-                        Candidate Details
-                      </h2>
-                      <div className="ml-3 h-7 flex items-center">
-                        <button
-                          onClick={() => setShowDetails(false)}
-                          className="bg-blue-600 rounded-md text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                        >
-                          <span className="sr-only">Close panel</span>
-                          <X className="h-6 w-6" aria-hidden="true" />
-                        </button>
-                      </div>
+                        <span className="sr-only">Close panel</span>
+                        <X className="h-6 w-6" aria-hidden="true" />
+                      </button>
                     </div>
                   </div>
+                </div>
 
-                  {/* Candidate Info */}
-                  <div className="relative flex-1 px-4 py-6 sm:px-6">
-                    <div className="space-y-6">
-                      {/* Basic Info */}
-                      <div>
-                        <div className="flex flex-col items-center mb-4">
-                          <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-                            <UserCircle className="h-12 w-12 text-blue-600" />
-                          </div>
-                          <h3 className="text-xl font-bold text-gray-900">
-                            {selectedApplication.Name || "Unnamed Candidate"}
-                          </h3>
-                          <p className="text-gray-500">
-                            {selectedApplication["Job Role"] || "Applicant"}
-                          </p>
+                {/* Candidate Info */}
+                <div className="relative flex-1 px-4 py-6 sm:px-6">
+                  <div className="space-y-6">
+                    {/* Basic Info */}
+                    <div>
+                      <div className="flex flex-col items-center mb-4">
+                        <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                          <UserCircle className="h-12 w-12 text-blue-600" />
                         </div>
-
-                        <div className="bg-blue-50 p-4 rounded-md mb-6">
-                          <div className="text-lg font-medium text-blue-800 mb-2">
-                            Match Score: {selectedApplication.score}%
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-1">
-                            <div
-                              className={`${getScoreBadgeColor(
-                                selectedApplication.score
-                              )} h-2.5 rounded-full`}
-                              style={{ width: `${selectedApplication.score}%` }}
-                            ></div>
-                          </div>
-                          <p className="text-sm text-blue-600 mt-1">
-                            {selectedApplication.thresholdPass
-                              ? "Passed threshold"
-                              : "Below threshold"}
-                          </p>
-                        </div>
-
-                        <div className="space-y-3">
-                          <div className="flex items-center">
-                            <Mail className="h-5 w-5 text-gray-400 mr-2" />
-                            <span className="text-gray-700">
-                              {selectedApplication.Email || "No email provided"}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <Phone className="h-5 w-5 text-gray-400 mr-2" />
-                            <span className="text-gray-700">
-                              {selectedApplication.Phone || "No phone provided"}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <CalendarDays className="h-5 w-5 text-gray-400 mr-2" />
-                            <span className="text-gray-700">
-                              Applied on{" "}
-                              {formatDate(selectedApplication.appliedAt)}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <Briefcase className="h-5 w-5 text-gray-400 mr-2" />
-                            <span className="text-gray-700">
-                              Applied for:{" "}
-                              {jobTitles[selectedApplication.jobId] ||
-                                selectedApplication.jobTitle}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <Clock className="h-5 w-5 text-gray-400 mr-2" />
-                            <span className="text-gray-700">
-                              Experience:{" "}
-                              {selectedApplication["Experience level"] ||
-                                "Not specified"}{" "}
-                              (
-                              {selectedApplication[
-                                "Total Estimated Years of Experience"
-                              ] || "0"}{" "}
-                              years)
-                            </span>
-                          </div>
-                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">
+                          {selectedApplication.Name || "Unnamed Candidate"}
+                        </h3>
+                        <p className="text-gray-500">
+                          {selectedApplication["Job Role"] || "Applicant"}
+                        </p>
                       </div>
 
-                      {/* Skills */}
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
-                          <Award className="h-4 w-4 mr-1" /> Skills
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedApplication.Skills &&
-                          selectedApplication.Skills.length > 0 ? (
-                            selectedApplication.Skills.map((skill, index) => (
-                              <span
+                      <div className="bg-blue-50 p-4 rounded-md mb-6">
+                        <div className="text-lg font-medium text-blue-800 mb-2">
+                          Match Score: {selectedApplication.score}%
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                          <div
+                            className={`${getScoreBadgeColor(
+                              selectedApplication.score
+                            )} h-2.5 rounded-full`}
+                            style={{ width: `${selectedApplication.score}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-sm text-blue-600 mt-1">
+                          {selectedApplication.thresholdPass
+                            ? "Passed threshold"
+                            : "Below threshold"}
+                        </p>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <Mail className="h-5 w-5 text-gray-400 mr-2" />
+                          <span className="text-gray-700">
+                            {selectedApplication.Email || "No email provided"}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <Phone className="h-5 w-5 text-gray-400 mr-2" />
+                          <span className="text-gray-700">
+                            {selectedApplication.Phone || "No phone provided"}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <CalendarDays className="h-5 w-5 text-gray-400 mr-2" />
+                          <span className="text-gray-700">
+                            Applied on{" "}
+                            {formatDate(selectedApplication.appliedAt)}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <Briefcase className="h-5 w-5 text-gray-400 mr-2" />
+                          <span className="text-gray-700">
+                            Applied for:{" "}
+                            {jobTitles[selectedApplication.jobId] ||
+                              selectedApplication.jobTitle}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-5 w-5 text-gray-400 mr-2" />
+                          <span className="text-gray-700">
+                            Experience:{" "}
+                            {selectedApplication["Experience level"] ||
+                              "Not specified"}{" "}
+                            (
+                            {selectedApplication[
+                              "Total Estimated Years of Experience"
+                            ] || "0"}{" "}
+                            years)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Skills */}
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
+                        <Award className="h-4 w-4 mr-1" /> Skills
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedApplication.Skills &&
+                        selectedApplication.Skills.length > 0 ? (
+                          selectedApplication.Skills.map((skill, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800"
+                            >
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <p className="text-gray-500">No skills listed</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Education */}
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
+                        <GraduationCap className="h-4 w-4 mr-1" /> Education
+                      </h4>
+                      {selectedApplication["Education Details"] &&
+                      selectedApplication["Education Details"].length > 0 ? (
+                        <div className="space-y-4">
+                          {selectedApplication["Education Details"].map(
+                            (edu, index) => (
+                              <div
                                 key={index}
-                                className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800"
+                                className="border-l-2 border-blue-500 pl-4 py-2"
                               >
-                                {skill}
-                              </span>
-                            ))
-                          ) : (
-                            <p className="text-gray-500">No skills listed</p>
+                                <div className="font-medium">
+                                  {edu["education level"] || "Degree"} in{" "}
+                                  {edu["field of study"] || "Not specified"}
+                                </div>
+                                <div className="text-gray-600 text-sm">
+                                  {edu.institution || "Unknown Institution"}
+                                </div>
+                                <div className="text-gray-500 text-sm flex justify-between">
+                                  <span>
+                                    {edu["date completed"] ||
+                                      "Date not specified"}
+                                  </span>
+                                  <span>
+                                    {edu["grade level"] ||
+                                      "Grade not specified"}
+                                  </span>
+                                </div>
+                              </div>
+                            )
                           )}
                         </div>
-                      </div>
+                      ) : (
+                        <p className="text-gray-500">
+                          No education details provided
+                        </p>
+                      )}
+                    </div>
 
-                      {/* Education */}
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
-                          <GraduationCap className="h-4 w-4 mr-1" /> Education
-                        </h4>
-                        {selectedApplication["Education Details"] &&
-                        selectedApplication["Education Details"].length > 0 ? (
-                          <div className="space-y-4">
-                            {selectedApplication["Education Details"].map(
-                              (edu, index) => (
-                                <div
-                                  key={index}
-                                  className="border-l-2 border-blue-500 pl-4 py-2"
-                                >
-                                  <div className="font-medium">
-                                    {edu["education level"] || "Degree"} in{" "}
-                                    {edu["field of study"] || "Not specified"}
-                                  </div>
-                                  <div className="text-gray-600 text-sm">
-                                    {edu.institution || "Unknown Institution"}
-                                  </div>
-                                  <div className="text-gray-500 text-sm flex justify-between">
-                                    <span>
-                                      {edu["date completed"] ||
-                                        "Date not specified"}
-                                    </span>
-                                    <span>
-                                      {edu["grade level"] ||
-                                        "Grade not specified"}
-                                    </span>
-                                  </div>
+                    {/* Experience */}
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
+                        <Briefcase className="h-4 w-4 mr-1" /> Experience
+                      </h4>
+                      {selectedApplication["Experience Details"] &&
+                      selectedApplication["Experience Details"].length > 0 ? (
+                        <div className="space-y-4">
+                          {selectedApplication["Experience Details"].map(
+                            (exp, index) => (
+                              <div
+                                key={index}
+                                className="border-l-2 border-blue-500 pl-4 py-2"
+                              >
+                                <div className="font-medium">
+                                  {exp.Roles || "Role not specified"}
                                 </div>
-                              )
-                            )}
-                          </div>
-                        ) : (
-                          <p className="text-gray-500">
-                            No education details provided
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Experience */}
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
-                          <Briefcase className="h-4 w-4 mr-1" /> Experience
-                        </h4>
-                        {selectedApplication["Experience Details"] &&
-                        selectedApplication["Experience Details"].length > 0 ? (
-                          <div className="space-y-4">
-                            {selectedApplication["Experience Details"].map(
-                              (exp, index) => (
-                                <div
-                                  key={index}
-                                  className="border-l-2 border-blue-500 pl-4 py-2"
-                                >
-                                  <div className="font-medium">
-                                    {exp.Roles || "Role not specified"}
-                                  </div>
-                                  <div className="text-gray-600 text-sm">
-                                    {exp["Industry Name"] ||
-                                      "Company not specified"}
-                                  </div>
+                                <div className="text-gray-600 text-sm">
+                                  {exp["Industry Name"] ||
+                                    "Company not specified"}
                                 </div>
-                              )
-                            )}
-                          </div>
-                        ) : (
-                          <p className="text-gray-500">
-                            No experience details provided
-                          </p>
-                        )}
-                      </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500">
+                          No experience details provided
+                        </p>
+                      )}
+                    </div>
 
-                      {/* Certifications */}
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
-                          <BookOpen className="h-4 w-4 mr-1" /> Certifications
-                        </h4>
-                        {selectedApplication.Certification &&
-                        selectedApplication.Certification.length > 0 ? (
-                          <ul className="list-disc pl-5 space-y-1">
-                            {selectedApplication.Certification.map(
-                              (cert, index) => (
-                                <li key={index} className="text-gray-700">
-                                  {cert}
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        ) : (
-                          <p className="text-gray-500">
-                            No certifications listed
-                          </p>
-                        )}
-                      </div>
+                    {/* Certifications */}
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3 flex items-center">
+                        <BookOpen className="h-4 w-4 mr-1" /> Certifications
+                      </h4>
+                      {selectedApplication.Certification &&
+                      selectedApplication.Certification.length > 0 ? (
+                        <ul className="list-disc pl-5 space-y-1">
+                          {selectedApplication.Certification.map(
+                            (cert, index) => (
+                              <li key={index} className="text-gray-700">
+                                {cert}
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      ) : (
+                        <p className="text-gray-500">
+                          No certifications listed
+                        </p>
+                      )}
+                    </div>
 
-                      {/* Resume Download */}
-                      <div>
-                        <a
-                          href={selectedApplication.resumeFileLocation}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full justify-center"
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          Download Resume
-                        </a>
-                      </div>
+                    {/* Resume Download */}
+                    <div>
+                      <a
+                        href={selectedApplication.resumeFileLocation}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full justify-center"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Resume
+                      </a>
+                    </div>
 
-                      {/* Talent Talk Button */}
-                      <div>
-                        <button
-                          onClick={openTalentTalk}
-                          className="inline-flex items-center px-4 py-2 border border-blue-600 text-sm font-medium rounded-md shadow-sm text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full justify-center"
-                        >
-                          <MessageSquare className="h-4 w-4 mr-2" />
-                          Ask TalentTalk About This Candidate
-                        </button>
-                      </div>
+                    {/* Talent Talk Button */}
+                    <div>
+                      <button
+                        onClick={openTalentTalk}
+                        className="inline-flex items-center px-4 py-2 border border-blue-600 text-sm font-medium rounded-md shadow-sm text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full justify-center"
+                      >
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Ask TalentTalk About This Candidate
+                      </button>
                     </div>
                   </div>
                 </div>

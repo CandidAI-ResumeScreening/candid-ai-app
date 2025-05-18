@@ -44,11 +44,17 @@ const jobOptions = [
 // Candidate options
 const candidateOptions = [
   {
-    title: "Recent Applications",
-    href: "/dashboard/candidates/applications",
+    title: "All Applications",
+    href: "/dashboard/applications",
     description:
-      "See any recent applications for the jobs you posted and converse with our chatbot TalentTalk to get more insights on the candidates.",
+      "See all applications for the jobs you posted and get detailed insights about candidates.",
   },
+  // {
+  //   title: "Recent Applications",
+  //   href: "/dashboard/applications",
+  //   description:
+  //     "See recent applications for the jobs you posted and converse with our chatbot TalentTalk to get more insights on the candidates.",
+  // },
 ];
 
 // Account options

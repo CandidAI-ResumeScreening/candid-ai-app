@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/store/useUserStore";
 import useJobStore from "@/store/useJobStore";
-import DashboardHeader from "@/app/components/dashboard/dashboard-header";
+import DashboardHeader from "@/app/components/jobs/dashboard-header";
 import JobFormStepper from "@/app/components/jobs/JobFormStepper";
 import StepOne from "@/app/components/jobs/StepOne";
 import StepTwo from "@/app/components/jobs/StepTwo";

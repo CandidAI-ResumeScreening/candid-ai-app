@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Edit, Trash2, Eye, Clock, Users, Plus } from "lucide-react";
 import Link from "next/link";
 import useUserStore from "@/store/useUserStore";
-import DashboardHeader from "@/app/components/dashboard/dashboard-header";
+import DashboardHeader from "@/app/components/jobs/dashboard-header";
 
 export default function ViewJobsPage() {
   const router = useRouter();

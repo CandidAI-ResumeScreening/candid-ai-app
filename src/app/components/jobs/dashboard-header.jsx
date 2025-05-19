@@ -60,10 +60,9 @@ const accountOptions = [
       "Update your profile and account details to keep your information current.",
   },
   {
-    title: "Billing",
-    href: "/dashboard/account/billing",
-    description:
-      "Manage your payment information and update your billing details.",
+    title: "Terms and Policies",
+    href: "/dashboard/termsAndPolicies",
+    description: "View our terms and policies.",
   },
 ];
 

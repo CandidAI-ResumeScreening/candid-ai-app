@@ -68,8 +68,7 @@ const accountOptions = [
   {
     title: "Terms and Policies",
     href: "/dashboard/termsAndPolicies",
-    description:
-      "Manage your payment information and update your billing details.",
+    description: "View our terms and policies.",
   },
 ];
 

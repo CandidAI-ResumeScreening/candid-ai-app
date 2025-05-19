@@ -28,7 +28,7 @@ import {
   LifeBuoy,
   X,
 } from "lucide-react";
-import DashboardHeader from "@/app/components/dashboard/dashboard-header";
+import DashboardHeader from "@/app/components/candidates-components/dashboard-header";
 import useUserStore from "@/store/useUserStore";
 
 export default function AllApplications() {

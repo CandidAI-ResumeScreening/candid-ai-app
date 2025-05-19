@@ -96,7 +96,7 @@ export default function DashboardHeader() {
                       asChild
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "border-blue-500 text-gray-900 border-b-2 font-medium"
+                        "text-gray-500 hover:text-gray-700 font-medium"
                       )}
                     >
                       <Link href="/dashboard">Dashboard</Link>
@@ -146,7 +146,7 @@ export default function DashboardHeader() {
                       asChild
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "text-gray-500 hover:text-gray-700 font-medium"
+                        "border-blue-500 text-gray-900 border-b-2 font-medium"
                       )}
                     >
                       <Link href="/dashboard/insights">Insights</Link>

@@ -44,10 +44,10 @@ const jobOptions = [
 // Candidate options
 const candidateOptions = [
   {
-    title: "All Applications",
-    href: "/dashboard/applications",
+    title: "Talent Talk",
+    href: "/dashboard/talenttalk-new",
     description:
-      "See all applications for the jobs you posted and get detailed insights about candidates.",
+      "Talk to our chatbot TalentTalk to get more insights on the candidates.",
   },
   // {
   //   title: "Recent Applications",
@@ -66,9 +66,10 @@ const accountOptions = [
       "Update your profile and account details to keep your information current.",
   },
   {
-    title: "Terms and Policies",
-    href: "/dashboard/termsAndPolicies",
-    description: "View our terms and policies.",
+    title: "Talent Talk",
+    href: "/dashboard/talenttalk-new",
+    description:
+      "Talk to our chatbot TalentTalk to get more insights on the candidates.",
   },
 ];
 
@@ -123,7 +124,7 @@ export default function DashboardHeader() {
 
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-gray-500 hover:text-gray-700 font-medium">
-                      Candidates
+                      Talent Talk
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <ul className="grid w-[400px] gap-3 p-4">

@@ -13,7 +13,7 @@ const {
   mapExperienceLevel,
   mapEducationLevel,
   mapEducationGrade,
-} = require("./src/lib/scoringModule");
+} = require("./src/lib/scoringModule2");
 
 // Sample job data (similar to the example provided)
 const jobData = {

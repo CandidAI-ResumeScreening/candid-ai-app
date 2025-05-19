@@ -1,4 +1,4 @@
-// src/app/api/assistant/route.js
+// src/app/api/assistant/route.js - Updated to handle optional system instruction
 import { NextResponse } from "next/server";
 import { AzureOpenAI } from "openai";
 import projectInfo from "@/lib/projectInfo";
@@ -11,7 +11,10 @@ const apiVersion = "2024-04-01-preview";
 
 export async function POST(request) {
   try {
-    const { message, conversation } = await request.json();
+    const requestData = await request.json();
+    const { message, conversation } = requestData;
+    // Only add systemInstruction to the request object if it exists
+    const systemInstruction = requestData.systemInstruction || null;
 
     // Validation
     if (!message) {
@@ -32,8 +35,10 @@ export async function POST(request) {
     const options = { endpoint, apiKey, deployment, apiVersion };
     const client = new AzureOpenAI(options);
 
-    // Create system prompt for the CandidAI assistant
-    const systemPrompt = `You are CandidAI Assistant, an AI-powered helper for the CandidAI resume screening platform.
+    // Create system prompt for the CandidAI assistant - use default unless systemInstruction is provided
+    const systemPrompt =
+      systemInstruction ||
+      `You are CandidAI Assistant, an AI-powered helper for the CandidAI resume screening platform.
 
 Your role is to help users with questions about the CandidAI platform, its features, and how to use it effectively.
 

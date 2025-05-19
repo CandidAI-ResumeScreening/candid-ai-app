@@ -1,9 +1,8 @@
-// src/app/dashboard/jobs/[id]/applicants/page.js
 "use client";
-import React from "react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import {
   ArrowLeft,
@@ -26,93 +25,73 @@ import {
   GraduationCap,
   BookOpen,
   Award,
+  LifeBuoy,
   X,
-  Upload,
-  Users,
-  CheckCircle,
 } from "lucide-react";
-import DashboardHeader from "@/app/components/jobs/dashboard-header";
+import DashboardHeader from "@/app/components/candidates-components/dashboard-header";
 import useUserStore from "@/store/useUserStore";
-import TalentTalk from "@/app/components/dashboard/TalentTalk";
+import TalentTalk from "./TalentTalk"; // Import the TalentTalk component
 
-export default function JobApplicantsPage({ params }) {
+export default function AllApplications() {
   const router = useRouter();
   const { user, isLoggedIn } = useUserStore();
-
-  // State variables
-  // Unwrap the params using React.use()
-  const unwrappedParams = React.use(params);
-  const id = unwrappedParams.id;
+  const [isUserLoggedIn, setisUserLoggedIn] = useState(true); // Local override
 
   const [loading, setLoading] = useState(true);
-  const [jobLoading, setJobLoading] = useState(true);
-  const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [jobTitles, setJobTitles] = useState({});
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [activeTab, setActiveTab] = useState("applied");
+  const [filterJobId, setFilterJobId] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredApplications, setFilteredApplications] = useState([]);
-  const [isClient, setIsClient] = useState(false);
-  const [uploadingResumes, setUploadingResumes] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
-  const [uploadSuccess, setUploadSuccess] = useState(null);
-  // Add this state variable inside your component
-  const [showTalentTalk, setShowTalentTalk] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
+  const [showTalentTalk, setShowTalentTalk] = useState(false); // State for showing TalentTalk
 
-  // Modify the openTalentTalk function
-  const openTalentTalk = () => {
-    setShowTalentTalk(true);
-  };
-
-  // Set isClient to true once component mounts
+  // Check for authentication
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Check authentication and redirect if not logged in
-  useEffect(() => {
-    if (isClient && !isLoggedIn) {
+    if (!isUserLoggedIn && typeof window !== "undefined") {
       router.push("/auth/login");
     }
-  }, [isClient, isLoggedIn, router]);
+  }, [isLoggedIn, router]);
 
-  // Fetch job details
+  // Fetch all jobs for filter dropdown
   useEffect(() => {
-    const fetchJobDetails = async () => {
-      if (!isClient || !isLoggedIn || !id) return;
-
+    const fetchJobs = async () => {
       try {
-        setJobLoading(true);
-        const response = await fetch(`/api/jobs/${id}`);
+        setLoadingJobs(true);
+        const response = await fetch("/api/jobs");
 
         if (!response.ok) {
-          throw new Error("Failed to fetch job details");
+          throw new Error("Failed to fetch jobs");
         }
 
         const data = await response.json();
-        setJob(data.job);
+        setJobs(data.jobs || []);
       } catch (err) {
-        console.error("Error fetching job:", err);
-        setError("Failed to load job details");
+        console.error("Error fetching jobs:", err);
       } finally {
-        setJobLoading(false);
+        setLoadingJobs(false);
       }
     };
 
-    fetchJobDetails();
-  }, [isClient, isLoggedIn, id]);
+    fetchJobs();
+  }, []);
 
-  // Fetch all applications for this job
+  // Fetch applications with filters
   useEffect(() => {
     const fetchApplications = async () => {
-      if (!isClient || !isLoggedIn || !id) return;
-
       try {
         setLoading(true);
-        // Get applications for this specific job
-        const response = await fetch(`/api/hr/all-applications?jobId=${id}`);
+
+        let url = "/api/hr/all-applications?sort=" + sortBy;
+        if (filterJobId) {
+          url += `&jobId=${filterJobId}`;
+        }
+
+        const response = await fetch(url);
 
         if (!response.ok) {
           throw new Error("Failed to fetch applications");
@@ -120,67 +99,42 @@ export default function JobApplicantsPage({ params }) {
 
         const data = await response.json();
         setApplications(data.applications || []);
+        setJobTitles(data.jobTitlesMap || {});
       } catch (err) {
         console.error("Error fetching applications:", err);
-        setError("Failed to load applications");
+        setError(err.message || "Failed to load applications");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchApplications();
-  }, [isClient, isLoggedIn, id]);
-
-  // Filter applications based on active tab and search term
-  useEffect(() => {
-    if (applications.length === 0) {
-      setFilteredApplications([]);
-      return;
+    if (isLoggedIn) {
+      fetchApplications();
     }
+  }, [isLoggedIn, filterJobId, sortBy]);
 
-    // Filter by status based on active tab
-    let filteredByStatus = applications;
+  // Filter applications by search term
+  const filteredApplications = useMemo(() => {
+    if (!searchTerm.trim()) return applications;
 
-    if (activeTab === "applied") {
-      filteredByStatus = applications.filter((app) => app.status === "applied");
-    } else if (activeTab === "interviewing") {
-      filteredByStatus = applications.filter(
-        (app) => app.status === "reviewing"
-      );
-    } else if (activeTab === "hired") {
-      filteredByStatus = applications.filter(
-        (app) => app.status === "selected"
-      );
-    } else if (activeTab === "rejected") {
-      filteredByStatus = applications.filter(
-        (app) => app.status === "rejected"
-      );
-    }
+    return applications.filter((app) => {
+      const searchLower = searchTerm.toLowerCase();
+      const nameMatch =
+        app.Name && app.Name.toLowerCase().includes(searchLower);
+      const emailMatch =
+        app.Email && app.Email.toLowerCase().includes(searchLower);
+      const phoneMatch =
+        app.Phone && app.Phone.toLowerCase().includes(searchLower);
+      const jobMatch =
+        jobTitles[app.jobId] &&
+        jobTitles[app.jobId].toLowerCase().includes(searchLower);
+      const skillsMatch =
+        app.Skills &&
+        app.Skills.some((skill) => skill.toLowerCase().includes(searchLower));
 
-    // Apply search filter if search term exists
-    if (searchTerm.trim() === "") {
-      setFilteredApplications(filteredByStatus);
-    } else {
-      const searchFilter = filteredByStatus.filter((app) => {
-        const lowerSearchTerm = searchTerm.toLowerCase();
-        const nameMatch =
-          app.Name && app.Name.toLowerCase().includes(lowerSearchTerm);
-        const emailMatch =
-          app.Email && app.Email.toLowerCase().includes(lowerSearchTerm);
-        const phoneMatch =
-          app.Phone && app.Phone.toLowerCase().includes(lowerSearchTerm);
-        const skillsMatch =
-          app.Skills &&
-          app.Skills.some((skill) =>
-            skill.toLowerCase().includes(lowerSearchTerm)
-          );
-
-        return nameMatch || emailMatch || phoneMatch || skillsMatch;
-      });
-
-      setFilteredApplications(searchFilter);
-    }
-  }, [applications, activeTab, searchTerm]);
+      return nameMatch || emailMatch || phoneMatch || jobMatch || skillsMatch;
+    });
+  }, [applications, searchTerm, jobTitles]);
 
   // Format application date
   const formatDate = (date) => {
@@ -214,7 +168,7 @@ export default function JobApplicantsPage({ params }) {
     return "bg-red-500";
   };
 
-  // Get score text color
+  // Get score class
   const getScoreClass = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 80) return "text-blue-600";
@@ -229,146 +183,13 @@ export default function JobApplicantsPage({ params }) {
     setShowDetails(true);
   };
 
-  // // Navigate to TalentTalk chatbot
-  // const openTalentTalk = () => {
-  //   router.push("/dashboard/talenttalk");
-  // };
-
-  // Update application status
-  const updateApplicationStatus = async (applicationId, newStatus) => {
-    try {
-      const response = await fetch(
-        `/api/hr/application-status/${applicationId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update application status");
-      }
-
-      // Update the application status in the state
-      setApplications((prevApplications) =>
-        prevApplications.map((app) =>
-          app._id === applicationId ? { ...app, status: newStatus } : app
-        )
-      );
-
-      // If the selected application is being updated, update it as well
-      if (selectedApplication && selectedApplication._id === applicationId) {
-        setSelectedApplication({ ...selectedApplication, status: newStatus });
-      }
-
-      // Show success message
-      setUploadSuccess(`Application status updated to ${newStatus}`);
-      setTimeout(() => setUploadSuccess(null), 3000);
-    } catch (error) {
-      console.error("Error updating application status:", error);
-      setUploadError("Failed to update application status. Please try again.");
-      setTimeout(() => setUploadError(null), 3000);
-    }
+  // Open TalentTalk chatbot
+  const openTalentTalk = () => {
+    setShowTalentTalk(true);
   };
 
-  // Handle bulk resume upload
-  const handleBulkUpload = async (e) => {
-    const files = e.target.files;
-
-    if (!files || files.length === 0) return;
-
-    setUploadingResumes(true);
-    setUploadError(null);
-    setUploadSuccess(null);
-
-    try {
-      // Track success and failures
-      let successCount = 0;
-      let failureCount = 0;
-
-      // Process each file sequentially
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-
-        // Create form data for parsing
-        const parseFormData = new FormData();
-        parseFormData.append("resume", file);
-
-        // Step 1: Parse the resume
-        const parseResponse = await fetch("/api/parse", {
-          method: "POST",
-          body: parseFormData,
-        });
-
-        if (!parseResponse.ok) {
-          failureCount++;
-          continue;
-        }
-
-        const parsedData = await parseResponse.json();
-
-        // Step 2: Submit the application
-        const applicationFormData = new FormData();
-        applicationFormData.append("resume", file);
-        applicationFormData.append("jobId", id);
-        applicationFormData.append("parsedData", JSON.stringify(parsedData));
-
-        const applicationResponse = await fetch("/api/public/apply", {
-          method: "POST",
-          body: applicationFormData,
-        });
-
-        if (applicationResponse.ok) {
-          successCount++;
-        } else {
-          failureCount++;
-        }
-      }
-
-      // Refresh applications list
-      if (successCount > 0) {
-        // Fetch updated applications
-        const response = await fetch(`/api/hr/all-applications?jobId=${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setApplications(data.applications || []);
-        }
-
-        setUploadSuccess(
-          `Successfully processed ${successCount} out of ${files.length} resumes`
-        );
-      }
-
-      if (failureCount > 0) {
-        setUploadError(`Failed to process ${failureCount} resumes`);
-      }
-    } catch (error) {
-      console.error("Error uploading resumes:", error);
-      setUploadError("An error occurred during bulk upload");
-    } finally {
-      setUploadingResumes(false);
-      // Clear the file input
-      e.target.value = "";
-    }
-  };
-
-  if (!isClient) {
-    // Initial loading state
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <DashboardHeader />
-        <main className="flex-1 overflow-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+  if (!isLoggedIn) {
+    return null; // Will redirect due to useEffect
   }
 
   return (
@@ -382,164 +203,77 @@ export default function JobApplicantsPage({ params }) {
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
             <div className="flex items-center mb-4 md:mb-0">
               <Link
-                href="/dashboard/jobs/view"
+                href="/dashboard"
                 className="mr-4 text-blue-600 hover:text-blue-800"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <h1 className="text-2xl font-bold text-gray-900">
-                {jobLoading ? "Loading..." : job ? job.title : "Applications"}
+                All Applications
               </h1>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-2">
-              {/* Upload Resumes Button */}
-              <div className="relative">
-                <input
-                  type="file"
-                  id="bulk-resume-upload"
-                  multiple
-                  accept=".pdf,.docx,.doc,.txt"
-                  onChange={handleBulkUpload}
-                  className="hidden"
-                  disabled={uploadingResumes}
-                />
-                <label
-                  htmlFor="bulk-resume-upload"
-                  className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    uploadingResumes
-                      ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-                  }`}
-                >
-                  {uploadingResumes ? (
-                    <>
-                      <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload Resumes
-                    </>
-                  )}
-                </label>
-              </div>
-
-              {/* TalentTalk Button */}
-              <button
-                onClick={openTalentTalk}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <MessageSquare className="mr-2 h-4 w-4" />
-                TalentTalk
-              </button>
-            </div>
+            <button
+              onClick={openTalentTalk}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Consult TalentTalk
+            </button>
           </div>
 
-          {/* Upload status messages */}
-          {uploadSuccess && (
-            <div className="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md flex items-center">
-              <CheckCircle className="h-5 w-5 mr-2" />
-              <span>{uploadSuccess}</span>
-            </div>
-          )}
-
-          {uploadError && (
-            <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md flex items-center">
-              <AlertTriangle className="h-5 w-5 mr-2" />
-              <span>{uploadError}</span>
-            </div>
-          )}
-
-          {/* Job Details Card */}
-          {job && (
-            <div className="bg-white shadow-sm rounded-lg p-4 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <span className="text-sm text-gray-500">Company</span>
-                  <p className="font-medium">{job.companyName}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500">Location</span>
-                  <p className="font-medium">{job.location}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500">Deadline</span>
-                  <p className="font-medium">
-                    {format(new Date(job.deadline), "MMMM dd, yyyy")}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500">
-                    Total Applicants
-                  </span>
-                  <p className="font-medium">{job.applications || 0}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
-            {/* Tab Navigation */}
-            <div className="border-b border-gray-200">
-              <nav className="flex -mb-px" aria-label="Tabs">
-                <button
-                  onClick={() => setActiveTab("applied")}
-                  className={`${
-                    activeTab === "applied"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm`}
-                >
-                  Applied
-                </button>
-                <button
-                  onClick={() => setActiveTab("interviewing")}
-                  className={`${
-                    activeTab === "interviewing"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm`}
-                >
-                  Interviewing
-                </button>
-                <button
-                  onClick={() => setActiveTab("hired")}
-                  className={`${
-                    activeTab === "hired"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm`}
-                >
-                  Hired
-                </button>
-                <button
-                  onClick={() => setActiveTab("rejected")}
-                  className={`${
-                    activeTab === "rejected"
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm`}
-                >
-                  Rejected
-                </button>
-              </nav>
-            </div>
-
-            {/* Search Bar */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+                {/* Search */}
+                <div className="relative flex-grow">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search candidates by name, email, skills..."
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Search candidates by name, email, skills..."
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+
+                {/* Job Filter */}
+                <div className="relative w-full md:w-1/4">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Filter className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <select
+                    className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm appearance-none"
+                    value={filterJobId}
+                    onChange={(e) => setFilterJobId(e.target.value)}
+                  >
+                    <option value="">All Jobs</option>
+                    {jobs.map((job) => (
+                      <option key={job._id} value={job._id}>
+                        {job.title}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+
+                {/* Sort */}
+                <div className="relative w-full md:w-1/4">
+                  <select
+                    className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="highest-score">Highest Score</option>
+                    <option value="lowest-score">Lowest Score</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -561,7 +295,7 @@ export default function JobApplicantsPage({ params }) {
                 <p className="text-gray-400 mt-2">
                   {searchTerm
                     ? "Try adjusting your search terms"
-                    : `No applicants in the "${activeTab}" status category`}
+                    : "Applications will appear here once candidates apply to your job posts"}
                 </p>
               </div>
             ) : (
@@ -574,6 +308,12 @@ export default function JobApplicantsPage({ params }) {
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
                         Candidate
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Job
                       </th>
                       <th
                         scope="col"
@@ -601,7 +341,7 @@ export default function JobApplicantsPage({ params }) {
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
                         Actions
                       </th>
@@ -627,6 +367,12 @@ export default function JobApplicantsPage({ params }) {
                                 {application.Email || "No email"}
                               </div>
                             </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {jobTitles[application.jobId] ||
+                              application.jobTitle}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -692,7 +438,7 @@ export default function JobApplicantsPage({ params }) {
         </div>
       </main>
 
-      {/* Candidate Details Modal */}
+      {/* Candidate Details Modal - Centered */}
       {showDetails && selectedApplication && (
         <div className="fixed inset-0 overflow-hidden z-20">
           <div className="absolute inset-0 overflow-hidden">
@@ -740,7 +486,6 @@ export default function JobApplicantsPage({ params }) {
                         </p>
                       </div>
 
-                      {/* Score Card */}
                       <div className="bg-blue-50 p-4 rounded-md mb-6">
                         <div className="text-lg font-medium text-blue-800 mb-2">
                           Match Score: {selectedApplication.score}%
@@ -758,69 +503,6 @@ export default function JobApplicantsPage({ params }) {
                             ? "Passed threshold"
                             : "Below threshold"}
                         </p>
-                      </div>
-
-                      {/* Current Status & Actions */}
-                      <div className="mb-6">
-                        <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
-                          Current Status
-                        </h4>
-                        <div className="flex items-center justify-between border rounded-md p-3">
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(
-                              selectedApplication.status
-                            )}`}
-                          >
-                            {selectedApplication.status
-                              .charAt(0)
-                              .toUpperCase() +
-                              selectedApplication.status.slice(1)}
-                          </span>
-
-                          <div className="flex space-x-2">
-                            {selectedApplication.status !== "reviewing" && (
-                              <button
-                                onClick={() =>
-                                  updateApplicationStatus(
-                                    selectedApplication._id,
-                                    "reviewing"
-                                  )
-                                }
-                                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                              >
-                                Set to Interviewing
-                              </button>
-                            )}
-
-                            {selectedApplication.status !== "selected" && (
-                              <button
-                                onClick={() =>
-                                  updateApplicationStatus(
-                                    selectedApplication._id,
-                                    "selected"
-                                  )
-                                }
-                                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                              >
-                                Set to Hired
-                              </button>
-                            )}
-
-                            {selectedApplication.status !== "rejected" && (
-                              <button
-                                onClick={() =>
-                                  updateApplicationStatus(
-                                    selectedApplication._id,
-                                    "rejected"
-                                  )
-                                }
-                                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                              >
-                                Set to Rejected
-                              </button>
-                            )}
-                          </div>
-                        </div>
                       </div>
 
                       <div className="space-y-3">
@@ -846,7 +528,15 @@ export default function JobApplicantsPage({ params }) {
                         <div className="flex items-center">
                           <Briefcase className="h-5 w-5 text-gray-400 mr-2" />
                           <span className="text-gray-700">
-                            Experience Level:{" "}
+                            Applied for:{" "}
+                            {jobTitles[selectedApplication.jobId] ||
+                              selectedApplication.jobTitle}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-5 w-5 text-gray-400 mr-2" />
+                          <span className="text-gray-700">
+                            Experience:{" "}
                             {selectedApplication["Experience level"] ||
                               "Not specified"}{" "}
                             (
@@ -991,7 +681,7 @@ export default function JobApplicantsPage({ params }) {
                       </a>
                     </div>
 
-                    {/* TalentTalk Button */}
+                    {/* Talent Talk Button */}
                     <div>
                       <button
                         onClick={openTalentTalk}
@@ -1008,12 +698,13 @@ export default function JobApplicantsPage({ params }) {
           </div>
         </div>
       )}
+
+      {/* TalentTalk Modal */}
       {showTalentTalk && (
         <TalentTalk
           candidates={applications}
-          jobDetails={job}
           onClose={() => setShowTalentTalk(false)}
-          context="jobSpecific"
+          context="general"
         />
       )}
     </div>

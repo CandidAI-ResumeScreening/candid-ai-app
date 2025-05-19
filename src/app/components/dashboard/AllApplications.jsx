@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import DashboardHeader from "@/app/components/candidates-components/dashboard-header";
 import useUserStore from "@/store/useUserStore";
+import TalentTalk from "./TalentTalk"; // Import the TalentTalk component
 
 export default function AllApplications() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function AllApplications() {
   const [searchTerm, setSearchTerm] = useState("");
   const [jobs, setJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
+  const [showTalentTalk, setShowTalentTalk] = useState(false); // State for showing TalentTalk
 
   // Check for authentication
   useEffect(() => {
@@ -182,7 +184,7 @@ export default function AllApplications() {
 
   // Open TalentTalk chatbot
   const openTalentTalk = () => {
-    router.push("/dashboard/talenttalk");
+    setShowTalentTalk(true);
   };
 
   if (!isLoggedIn) {
@@ -694,6 +696,15 @@ export default function AllApplications() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* TalentTalk Modal */}
+      {showTalentTalk && (
+        <TalentTalk
+          candidates={applications}
+          onClose={() => setShowTalentTalk(false)}
+          context="general"
+        />
       )}
     </div>
   );

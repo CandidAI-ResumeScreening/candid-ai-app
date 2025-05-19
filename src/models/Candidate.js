@@ -46,6 +46,11 @@ const CandidateSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    // Raw resume text
+    rawResumeText: {
+      type: String,
+      trim: true,
+    },
     // Job related fields
     jobId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -96,5 +101,7 @@ const CandidateSchema = new mongoose.Schema(
   { collection: "candidates", db: "candidai" }
 );
 
-export default mongoose.models.Candidate ||
-  mongoose.model("Candidate", CandidateSchema);
+const Candidate =
+  mongoose.models.Candidate || mongoose.model("Candidate", CandidateSchema);
+
+export default Candidate;

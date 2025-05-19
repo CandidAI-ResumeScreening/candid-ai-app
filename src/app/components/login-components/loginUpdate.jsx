@@ -127,7 +127,7 @@ export default function Login() {
                     </div>
                     <div className="mt-2 flex items-center justify-end">
                       <Link
-                        href="/auth/forgot-password"
+                        href="/auth/signup"
                         className="text-sm text-blue-600 hover:text-blue-500"
                       >
                         Forgot password?

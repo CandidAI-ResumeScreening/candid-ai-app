@@ -18,7 +18,7 @@ import {
   Clock,
   BarChart,
 } from "lucide-react";
-import Navbar from "../../components/home-components/Navbar";
+import Navbar from "../../components/applyjobs-component/Navbar";
 import Footer from "../../components/home-components/Footer";
 
 export default function JobApplyPage({ params }) {

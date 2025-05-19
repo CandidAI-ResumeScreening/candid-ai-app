@@ -44,10 +44,10 @@ const jobOptions = [
 // Candidate options
 const candidateOptions = [
   {
-    title: "Recent Applications",
-    href: "/dashboard/candidates/applications",
+    title: "Talent Talk",
+    href: "/dashboard/talenttalk-new",
     description:
-      "See any recent applications for the jobs you posted and converse with our chatbot TalentTalk to get more insights on the candidates.",
+      "Talk to our chatbot TalentTalk to get more insights on the candidates.",
   },
 ];
 
@@ -117,7 +117,7 @@ export default function DashboardHeader() {
 
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-gray-500 hover:text-gray-700 font-medium">
-                      Candidates
+                      Talent Talk
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <ul className="grid w-[400px] gap-3 p-4">

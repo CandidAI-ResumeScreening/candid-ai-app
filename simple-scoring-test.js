@@ -7,7 +7,7 @@
  */
 
 // Import the scoring module
-const { scoreCandidate } = require("./src/lib/scoringModule");
+const { scoreCandidate } = require("./src/lib/scoringModule2");
 
 // Sample job data for a Data Scientist position
 const dataScientistJob = {
@@ -176,7 +176,7 @@ console.log("Candidate: Sarah Kamau");
 console.log("-----------------------------------------------\n");
 
 // Get the full scoring result
-const result = scoreCandidate(candidateData1, dataScientistJob);
+const result = scoreCandidate(dataScientistCandidate, dataScientistJob);
 
 // ========== DETAILED OUTPUT OF SCORING PROCESS ==========
 
@@ -186,7 +186,7 @@ console.log("-------------------");
 console.log("Required Skills:", dataScientistJob.skills.join(", "));
 console.log(
   "Candidate Skills:",
-  candidateData1.Skills.slice(0, 10).join(", ") + "..."
+  dataScientistCandidate.Skills.slice(0, 10).join(", ") + "..."
 );
 console.log("\nMatched Skills:");
 result.details.skills.matchedSkills.forEach((skill) => {
@@ -223,7 +223,7 @@ console.log("\n2. EXPERIENCE LEVEL EVALUATION");
 console.log("-----------------------------");
 console.log(`Required Experience Level: ${dataScientistJob.experienceLevel}`);
 console.log(
-  `Candidate Experience Level: ${candidateData1["Experience level"]}`
+  `Candidate Experience Level: ${dataScientistCandidate["Experience level"]}`
 );
 console.log(
   `Experience Level Score: ${(
@@ -246,7 +246,7 @@ console.log("\n3. YEARS OF EXPERIENCE EVALUATION");
 console.log("--------------------------------");
 console.log(`Required Years: ${dataScientistJob.yearsOfExperience}`);
 console.log(
-  `Candidate Years: ${candidateData1["Total Estimated Years of Experience"]}`
+  `Candidate Years: ${dataScientistCandidate["Total Estimated Years of Experience"]}`
 );
 console.log(
   `Years of Experience Score: ${(
@@ -267,7 +267,7 @@ console.log(
 // 4. EDUCATION EVALUATION
 console.log("\n4. EDUCATION EVALUATION");
 console.log("----------------------");
-const candidateEducation = candidateData1["Education Details"][0];
+const candidateEducation = dataScientistCandidate["Education Details"][0];
 console.log(`Required Education Level: ${dataScientistJob.educationLevel}`);
 console.log(
   `Candidate Education Level: ${candidateEducation["education level"]}`

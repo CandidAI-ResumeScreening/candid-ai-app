@@ -27,7 +27,9 @@ import {
   Award,
   LifeBuoy,
   X,
+  Edit,
 } from "lucide-react";
+
 import DashboardHeader from "@/app/components/candidates-components/dashboard-header";
 import useUserStore from "@/store/useUserStore";
 import TalentTalk from "./TalentTalk"; // Import the TalentTalk component
@@ -180,6 +182,10 @@ export default function AllApplications() {
   const viewCandidateDetails = (application) => {
     setSelectedApplication(application);
     setShowDetails(true);
+  };
+  // Navigate to edit candidate page
+  const navigateToEditCandidate = (candidateId, jobId) => {
+    router.push(`/dashboard/jobs/${jobId}/candidates/${candidateId}/edit`);
   };
 
   // Open TalentTalk chatbot
@@ -359,7 +365,15 @@ export default function AllApplications() {
                               </span>
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div
+                                className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                                onClick={() =>
+                                  navigateToEditCandidate(
+                                    application._id,
+                                    application.jobId
+                                  )
+                                }
+                              >
                                 {application.Name || "Unnamed Candidate"}
                               </div>
                               <div className="text-sm text-gray-500">

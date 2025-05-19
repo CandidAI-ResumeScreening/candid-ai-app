@@ -50,7 +50,7 @@ const Team = () => {
               </div> */}
               <div className="w-40 h-40 relative rounded-full overflow-hidden mb-4">
                 <Image
-                  src="/team-members/nelson.jpeg"
+                  src="/team-members/yusin2.jpeg"
                   alt="Yusin Adan Ali"
                   fill
                   sizes="160px"

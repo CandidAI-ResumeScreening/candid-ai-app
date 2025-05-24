@@ -66,10 +66,9 @@ const accountOptions = [
       "Update your profile and account details to keep your information current.",
   },
   {
-    title: "Talent Talk",
-    href: "/dashboard/talenttalk-new",
-    description:
-      "Talk to our chatbot TalentTalk to get more insights on the candidates.",
+    title: "Terms and Policies",
+    href: "/dashboard/termsAndPolicies",
+    description: "View our terms and policies.",
   },
 ];
 
@@ -241,7 +240,7 @@ export default function DashboardHeader() {
               <Accordion type="single" collapsible>
                 <AccordionItem value="candidates" className="border-0">
                   <AccordionTrigger className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800 flex justify-between cursor-pointer">
-                    Candidates
+                    Talent Talk
                   </AccordionTrigger>
                   <AccordionContent className="border-0 pt-0">
                     {candidateOptions.map((option) => (

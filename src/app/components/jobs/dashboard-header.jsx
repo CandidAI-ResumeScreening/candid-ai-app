@@ -234,7 +234,7 @@ export default function DashboardHeader() {
               <Accordion type="single" collapsible>
                 <AccordionItem value="candidates" className="border-0">
                   <AccordionTrigger className="w-full px-4 py-2 text-base font-medium text-gray-600 hover:text-gray-800 flex justify-between cursor-pointer">
-                    Candidates
+                    Talent Talk
                   </AccordionTrigger>
                   <AccordionContent className="border-0 pt-0">
                     {candidateOptions.map((option) => (

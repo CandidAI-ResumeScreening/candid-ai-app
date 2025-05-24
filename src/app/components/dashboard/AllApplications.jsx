@@ -123,7 +123,9 @@ export default function AllApplications() {
       const nameMatch =
         app.Name && app.Name.toLowerCase().includes(searchLower);
       const emailMatch =
-        app.Email && app.Email.toLowerCase().includes(searchLower);
+        app.Email &&
+        app.Email !== "Not specified" &&
+        app.Email.toLowerCase().includes(searchLower);
       const phoneMatch =
         app.Phone && app.Phone.toLowerCase().includes(searchLower);
       const jobMatch =
@@ -365,19 +367,14 @@ export default function AllApplications() {
                               </span>
                             </div>
                             <div className="ml-4">
-                              <div
-                                className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
-                                onClick={() =>
-                                  navigateToEditCandidate(
-                                    application._id,
-                                    application.jobId
-                                  )
-                                }
-                              >
+                              <div className="text-sm font-medium text-gray-900">
                                 {application.Name || "Unnamed Candidate"}
                               </div>
                               <div className="text-sm text-gray-500">
-                                {application.Email || "No email"}
+                                {application.Email &&
+                                application.Email !== "Not specified"
+                                  ? application.Email
+                                  : "No email provided"}
                               </div>
                             </div>
                           </div>
@@ -522,7 +519,10 @@ export default function AllApplications() {
                         <div className="flex items-center">
                           <Mail className="h-5 w-5 text-gray-400 mr-2" />
                           <span className="text-gray-700">
-                            {selectedApplication.Email || "No email provided"}
+                            {selectedApplication.Email &&
+                            selectedApplication.Email !== "Not specified"
+                              ? selectedApplication.Email
+                              : "No email provided"}
                           </span>
                         </div>
                         <div className="flex items-center">

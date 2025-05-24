@@ -11,8 +11,9 @@ const CandidateSchema = new mongoose.Schema(
     },
     Email: {
       type: String,
-      required: [true, "Email is required"],
+      required: false, // Changed from required to optional
       trim: true,
+      default: "Not specified", // Provide default value
     },
     Phone: {
       type: String,
@@ -64,7 +65,7 @@ const CandidateSchema = new mongoose.Schema(
     },
     hr_email: {
       type: String,
-      required: [true, "HR email is required"],
+      required: [true, "HR email is required"], // This remains required as it identifies the HR
       trim: true,
     },
     // Application details

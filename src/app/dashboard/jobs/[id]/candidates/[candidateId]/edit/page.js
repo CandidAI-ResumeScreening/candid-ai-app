@@ -343,7 +343,7 @@ export default function EditCandidatePage({ params }) {
                       Email <span className="text-red-500">*</span>
                     </label>
                     <input
-                      type="email"
+                      type="text"
                       name="Email"
                       value={formData.Email}
                       onChange={handleChange}

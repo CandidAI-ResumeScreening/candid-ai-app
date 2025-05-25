@@ -1,4 +1,4 @@
-// src/app/dashboard/jobs/[id]/applicants/page.js
+// src/app/dashboard/jobs/[id]/applicants/page.js - Updated with edit candidate functionality
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -30,6 +30,7 @@ import {
   Upload,
   Users,
   CheckCircle,
+  Edit,
 } from "lucide-react";
 import DashboardHeader from "@/app/components/jobs/dashboard-header";
 import useUserStore from "@/store/useUserStore";
@@ -64,6 +65,11 @@ export default function JobApplicantsPage({ params }) {
   // Modify the openTalentTalk function
   const openTalentTalk = () => {
     setShowTalentTalk(true);
+  };
+
+  // Navigate to edit candidate page
+  const navigateToEditCandidate = (candidateId) => {
+    router.push(`/dashboard/jobs/${id}/candidates/${candidateId}/edit`);
   };
 
   // Set isClient to true once component mounts
@@ -228,11 +234,6 @@ export default function JobApplicantsPage({ params }) {
     setSelectedApplication(application);
     setShowDetails(true);
   };
-
-  // // Navigate to TalentTalk chatbot
-  // const openTalentTalk = () => {
-  //   router.push("/dashboard/talenttalk");
-  // };
 
   // Update application status
   const updateApplicationStatus = async (applicationId, newStatus) => {
@@ -620,7 +621,12 @@ export default function JobApplicantsPage({ params }) {
                               </span>
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div
+                                className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                                onClick={() =>
+                                  navigateToEditCandidate(application._id)
+                                }
+                              >
                                 {application.Name || "Unnamed Candidate"}
                               </div>
                               <div className="text-sm text-gray-500">
@@ -675,12 +681,24 @@ export default function JobApplicantsPage({ params }) {
                           </a>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button
-                            onClick={() => viewCandidateDetails(application)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            View Details
-                          </button>
+                          <div className="flex space-x-2 justify-end">
+                            <button
+                              onClick={() => viewCandidateDetails(application)}
+                              className="text-blue-600 hover:text-blue-900"
+                              title="View Details"
+                            >
+                              View
+                            </button>
+                            <button
+                              onClick={() =>
+                                navigateToEditCandidate(application._id)
+                              }
+                              className="text-emerald-600 hover:text-emerald-900"
+                              title="Edit Candidate"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -767,7 +785,8 @@ export default function JobApplicantsPage({ params }) {
                         </h4>
                         <div className="flex items-center justify-between border rounded-md p-3">
                           <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(
+                            className={`px-2 inline-flex text-xs// src/app/dashboard/jobs/[id]/applicants/page.js - Continuation
+                            leading-5 font-semibold rounded-full ${getStatusBadgeColor(
                               selectedApplication.status
                             )}`}
                           >
@@ -844,7 +863,7 @@ export default function JobApplicantsPage({ params }) {
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <Briefcase className="h-5 w-5 text-gray-400 mr-2" />
+                          <Clock className="h-5 w-5 text-gray-400 mr-2" />
                           <span className="text-gray-700">
                             Experience Level:{" "}
                             {selectedApplication["Experience level"] ||
@@ -991,6 +1010,20 @@ export default function JobApplicantsPage({ params }) {
                       </a>
                     </div>
 
+                    {/* Edit Candidate Button */}
+                    <div>
+                      <button
+                        onClick={() => {
+                          setShowDetails(false); // Close details modal
+                          navigateToEditCandidate(selectedApplication._id);
+                        }}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 w-full justify-center"
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Candidate
+                      </button>
+                    </div>
+
                     {/* TalentTalk Button */}
                     <div>
                       <button
@@ -1008,6 +1041,8 @@ export default function JobApplicantsPage({ params }) {
           </div>
         </div>
       )}
+
+      {/* TalentTalk Modal */}
       {showTalentTalk && (
         <TalentTalk
           candidates={applications}

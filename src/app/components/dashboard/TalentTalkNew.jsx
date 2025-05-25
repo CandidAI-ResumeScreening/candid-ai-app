@@ -73,7 +73,7 @@ const TalentTalkNew = ({ onClose, candidates = [], jobDetails = null }) => {
     return format(new Date(date), "h:mm a");
   };
 
-  const API_URL = "https://902a-34-143-215-137.ngrok-free.app/simple_chat";
+  const API_URL = "https://e979-34-125-38-55.ngrok-free.app/simple_chat";
 
   // Add a fallback response function for when Ollama API fails
   const generateFallbackResponse = (input) => {

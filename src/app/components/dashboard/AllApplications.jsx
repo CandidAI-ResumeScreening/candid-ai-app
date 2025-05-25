@@ -27,7 +27,9 @@ import {
   Award,
   LifeBuoy,
   X,
+  Edit,
 } from "lucide-react";
+
 import DashboardHeader from "@/app/components/candidates-components/dashboard-header";
 import useUserStore from "@/store/useUserStore";
 import TalentTalk from "./TalentTalk"; // Import the TalentTalk component
@@ -121,7 +123,9 @@ export default function AllApplications() {
       const nameMatch =
         app.Name && app.Name.toLowerCase().includes(searchLower);
       const emailMatch =
-        app.Email && app.Email.toLowerCase().includes(searchLower);
+        app.Email &&
+        app.Email !== "Not specified" &&
+        app.Email.toLowerCase().includes(searchLower);
       const phoneMatch =
         app.Phone && app.Phone.toLowerCase().includes(searchLower);
       const jobMatch =
@@ -180,6 +184,10 @@ export default function AllApplications() {
   const viewCandidateDetails = (application) => {
     setSelectedApplication(application);
     setShowDetails(true);
+  };
+  // Navigate to edit candidate page
+  const navigateToEditCandidate = (candidateId, jobId) => {
+    router.push(`/dashboard/jobs/${jobId}/candidates/${candidateId}/edit`);
   };
 
   // Open TalentTalk chatbot
@@ -363,7 +371,10 @@ export default function AllApplications() {
                                 {application.Name || "Unnamed Candidate"}
                               </div>
                               <div className="text-sm text-gray-500">
-                                {application.Email || "No email"}
+                                {application.Email &&
+                                application.Email !== "Not specified"
+                                  ? application.Email
+                                  : "No email provided"}
                               </div>
                             </div>
                           </div>
@@ -508,7 +519,10 @@ export default function AllApplications() {
                         <div className="flex items-center">
                           <Mail className="h-5 w-5 text-gray-400 mr-2" />
                           <span className="text-gray-700">
-                            {selectedApplication.Email || "No email provided"}
+                            {selectedApplication.Email &&
+                            selectedApplication.Email !== "Not specified"
+                              ? selectedApplication.Email
+                              : "No email provided"}
                           </span>
                         </div>
                         <div className="flex items-center">

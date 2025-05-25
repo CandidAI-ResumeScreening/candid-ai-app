@@ -47,6 +47,16 @@ export async function POST(request) {
       );
     }
 
+    // Ensure email field has a value - set to "Not specified" if missing or empty
+    if (!parsedData.Email || parsedData.Email.trim() === "") {
+      parsedData.Email = "Not specified";
+    }
+
+    // Ensure name field has a value - set to "Unknown Candidate" if missing or empty
+    if (!parsedData.Name || parsedData.Name.trim() === "") {
+      parsedData.Name = "Unknown Candidate";
+    }
+
     // Score the candidate
     const scoringResult = scoreCandidate(parsedData, job);
 

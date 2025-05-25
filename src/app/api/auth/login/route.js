@@ -43,26 +43,24 @@ export async function POST(request) {
       email: user.email,
     };
 
-    // Create response
-    const response = NextResponse.json(
+    return NextResponse.json(
       {
         success: true,
         user: userWithoutPassword,
         token,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          // REMOVED HttpOnly to make cookie accessible via JavaScript
+          "Set-Cookie": `token=${token}; Path=/; Max-Age=${
+            7 * 24 * 60 * 60
+          }; SameSite=Lax${
+            process.env.NODE_ENV === "production" ? "; Secure" : ""
+          }`,
+        },
+      }
     );
-
-    // ONLY CHANGE: Set cookie with better settings for Vercel
-    response.cookies.set("token", token, {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-    });
-
-    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

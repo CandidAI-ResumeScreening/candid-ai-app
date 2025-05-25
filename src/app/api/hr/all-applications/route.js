@@ -1,20 +1,53 @@
 // src/app/api/hr/all-applications/route.js
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import { getAuthFromRequest } from "@/lib/auth"; // Import centralized auth
+import { headers } from "next/headers";
+import jwt from "jsonwebtoken";
+import User from "@/models/User";
 import Candidate from "@/models/Candidate";
 import Job from "@/models/Job";
 
-// Remove these - they're now in /lib/auth.js:
-// - getUserFromToken function
-// - getAuthFromRequest function
-// - jwt import
-// - User import
-// - headers import
+// Get user from JWT token
+const getUserFromToken = async (token) => {
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Find user by ID
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
+  } catch (error) {
+    console.error("Error getting user from token:", error);
+    throw new Error("Invalid or expired token");
+  }
+};
+
+// Helper to get authentication from request
+const getAuthFromRequest = async () => {
+  // Get token from cookies - make it awaitable
+  const headersList = await headers();
+  const cookie = headersList.get("cookie") || "";
+  const tokenMatch = cookie.match(/token=([^;]+)/);
+
+  if (!tokenMatch) {
+    throw new Error("Not authenticated");
+  }
+
+  const token = tokenMatch[1];
+
+  // Get user from token
+  const user = await getUserFromToken(token);
+  return user;
+};
 
 export async function GET(request) {
   try {
-    // Get authenticated user using centralized helper
+    // Get authenticated user
     const user = await getAuthFromRequest();
 
     // Connect to the database
@@ -72,10 +105,7 @@ export async function GET(request) {
   } catch (error) {
     console.error("Error getting applications:", error);
 
-    if (
-      error.message === "Not authenticated" ||
-      error.message === "Invalid or expired token"
-    ) {
+    if (error.message === "Not authenticated") {
       return NextResponse.json(
         { success: false, message: "Not authenticated" },
         { status: 401 }

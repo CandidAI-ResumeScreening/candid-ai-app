@@ -276,6 +276,86 @@ export default function JobApplicantsPage({ params }) {
   };
 
   // Handle bulk resume upload
+  // const handleBulkUpload = async (e) => {
+  //   const files = e.target.files;
+
+  //   if (!files || files.length === 0) return;
+
+  //   setUploadingResumes(true);
+  //   setUploadError(null);
+  //   setUploadSuccess(null);
+
+  //   try {
+  //     // Track success and failures
+  //     let successCount = 0;
+  //     let failureCount = 0;
+
+  //     // Process each file sequentially
+  //     for (let i = 0; i < files.length; i++) {
+  //       const file = files[i];
+
+  //       // Create form data for parsing
+  //       const parseFormData = new FormData();
+  //       parseFormData.append("resume", file);
+
+  //       // Step 1: Parse the resume
+  //       const parseResponse = await fetch("/api/parse", {
+  //         method: "POST",
+  //         body: parseFormData,
+  //       });
+
+  //       if (!parseResponse.ok) {
+  //         failureCount++;
+  //         continue;
+  //       }
+
+  //       const parsedData = await parseResponse.json();
+
+  //       // Step 2: Submit the application
+  //       const applicationFormData = new FormData();
+  //       applicationFormData.append("resume", file);
+  //       applicationFormData.append("jobId", id);
+  //       applicationFormData.append("parsedData", JSON.stringify(parsedData));
+
+  //       const applicationResponse = await fetch("/api/public/apply", {
+  //         method: "POST",
+  //         body: applicationFormData,
+  //       });
+
+  //       if (applicationResponse.ok) {
+  //         successCount++;
+  //       } else {
+  //         failureCount++;
+  //       }
+  //     }
+
+  //     // Refresh applications list
+  //     if (successCount > 0) {
+  //       // Fetch updated applications
+  //       const response = await fetch(`/api/hr/all-applications?jobId=${id}`);
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         setApplications(data.applications || []);
+  //       }
+
+  //       setUploadSuccess(
+  //         `Successfully processed ${successCount} out of ${files.length} resumes`
+  //       );
+  //     }
+
+  //     if (failureCount > 0) {
+  //       setUploadError(`Failed to process ${failureCount} resumes`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading resumes:", error);
+  //     setUploadError("An error occurred during bulk upload");
+  //   } finally {
+  //     setUploadingResumes(false);
+  //     // Clear the file input
+  //     e.target.value = "";
+  //   }
+  // };
+  // Updated handleBulkUpload function for Vercel Blob storage
   const handleBulkUpload = async (e) => {
     const files = e.target.files;
 

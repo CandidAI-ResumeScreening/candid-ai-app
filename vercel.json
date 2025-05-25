@@ -1,0 +1,18 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "functions": {
+    "src/app/api/**/*.js": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "MONGODB_URI": "@mongodb-uri",
+    "JWT_SECRET": "@jwt-secret",
+    "AZURE_OPENAI_ENDPOINT": "@azure-openai-endpoint",
+    "AZURE_OPENAI_API_KEY": "@azure-openai-api-key",
+    "FLASK_API_URL": "@flask-api-url"
+  }
+}

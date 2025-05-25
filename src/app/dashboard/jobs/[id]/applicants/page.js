@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 import DashboardHeader from "@/app/components/jobs/dashboard-header";
 import useUserStore from "@/store/useUserStore";
-import TalentTalk from "@/app/components/dashboard/TalentTalk";
+import TalentTalk from "@/app/components/dashboard/TalentTalk2";
 
 export default function JobApplicantsPage({ params }) {
   const router = useRouter();

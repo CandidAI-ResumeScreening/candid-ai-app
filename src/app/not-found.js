@@ -44,7 +44,7 @@ export default function NotFound() {
             </h2>
 
             <p className="mt-4 text-xl text-gray-500 max-w-md mx-auto">
-              We couldn't find the page you're looking for. It might have been
+              We could not find the page you are looking for. It might have been
               moved or deleted.
             </p>
 

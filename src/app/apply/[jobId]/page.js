@@ -441,8 +441,8 @@ export default function ApplyJobPage({ params }) {
                             </div>
 
                             <p className="mt-3">
-                              We'll notify you if your application progresses to
-                              the next stage.
+                              We will notify you if your application progresses
+                              to the next stage.
                             </p>
                           </div>
                         )}

@@ -223,8 +223,8 @@ export default function JobApplyPage({ params }) {
                   {scoringResult && (
                     <div className="mt-2">
                       <p className="mt-3 text-sm">
-                        Thank you for your application! You'll be notified if
-                        you're selected for the next stage.
+                        Thank you for your application. You will be notified if
+                        you absolutere selected for the next stage.
                       </p>
                     </div>
                   )}

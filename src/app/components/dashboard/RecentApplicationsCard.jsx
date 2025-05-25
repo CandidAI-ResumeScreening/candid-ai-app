@@ -14,7 +14,10 @@ export default function RecentApplicationsCard() {
     const fetchRecentApplications = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/hr/recent-applications?limit=5");
+        // In RecentApplications.jsx and Stats.jsx
+        const response = await fetch("/api/hr/recent-applications", {
+          credentials: "include", // Add this to include cookies
+        });
 
         if (!response.ok) {
           const errorData = await response.json();

@@ -31,7 +31,10 @@ const Stats = () => {
         ).length;
 
         // Fetch all applications to count candidates and interviews
-        const applicationsResponse = await fetch("/api/hr/all-applications");
+        const applicationsResponse = await fetch("/api/hr/all-applications", {
+          credentials: "include", // ADD THIS LINE
+        });
+
         if (!applicationsResponse.ok)
           throw new Error("Failed to fetch applications");
         const applicationsData = await applicationsResponse.json();

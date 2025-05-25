@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { headers } from "next/headers";
+import { getAuthFromRequest } from "@/lib/auth"; // Import centralized auth
 import jwt from "jsonwebtoken";
 import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
@@ -27,22 +28,22 @@ const getUserFromToken = async (token) => {
 };
 
 // Helper to get authentication from request
-const getAuthFromRequest = async () => {
-  // Get token from cookies
-  const headersList = await headers();
-  const cookie = headersList.get("cookie") || "";
-  const tokenMatch = cookie.match(/token=([^;]+)/);
+// const getAuthFromRequest = async () => {
+//   // Get token from cookies
+//   const headersList = await headers();
+//   const cookie = headersList.get("cookie") || "";
+//   const tokenMatch = cookie.match(/token=([^;]+)/);
 
-  if (!tokenMatch) {
-    throw new Error("Not authenticated");
-  }
+//   if (!tokenMatch) {
+//     throw new Error("Not authenticated");
+//   }
 
-  const token = tokenMatch[1];
+//   const token = tokenMatch[1];
 
-  // Get user from token
-  const user = await getUserFromToken(token);
-  return user;
-};
+//   // Get user from token
+//   const user = await getUserFromToken(token);
+//   return user;
+// };
 
 export async function PATCH(request) {
   try {

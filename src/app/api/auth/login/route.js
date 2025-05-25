@@ -43,21 +43,28 @@ export async function POST(request) {
       email: user.email,
     };
 
-    return NextResponse.json(
+    // Create response with updated cookie settings for production
+    const response = NextResponse.json(
       {
         success: true,
         user: userWithoutPassword,
         token,
       },
-      {
-        status: 200,
-        headers: {
-          "Set-Cookie": `token=${token}; Path=/; HttpOnly; Max-Age=${
-            7 * 24 * 60 * 60
-          }; SameSite=Lax`,
-        },
-      }
+      { status: 200 }
     );
+
+    // Set cookie with production-friendly settings
+    const isProduction = process.env.NODE_ENV === "production";
+
+    response.cookies.set("token", token, {
+      path: "/",
+      httpOnly: true,
+      secure: isProduction, // Use secure cookies in production
+      sameSite: isProduction ? "none" : "lax", // Allow cross-site cookies in production
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+    });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

@@ -1,7 +1,8 @@
 "use client";
 
-import TalentTalkPage from "@/app/components/dashboard/TalentTalk";
+import TalentTalk from "@/app/components/dashboard/TalentTalk";
+// import TalentTalkPage from "@/app/components/dashboard/TalentTalk";
 
 export default function TalentTalkRoute() {
-  return <TalentTalkPage />;
+  return <TalentTalk />;
 }

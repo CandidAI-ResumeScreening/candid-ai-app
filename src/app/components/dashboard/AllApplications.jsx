@@ -32,7 +32,7 @@ import {
 
 import DashboardHeader from "@/app/components/candidates-components/dashboard-header";
 import useUserStore from "@/store/useUserStore";
-import TalentTalk from "./TalentTalk"; // Import the TalentTalk component
+import TalentTalk from "@/app/components/dashboard/TalentTalk"; // Import the TalentTalk component
 
 export default function AllApplications() {
   const router = useRouter();

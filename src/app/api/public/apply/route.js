@@ -4,8 +4,10 @@ import connectToDatabase from "@/lib/mongodb";
 import { scoreCandidate } from "@/lib/scoringModule";
 import Job from "@/models/Job";
 import Candidate from "@/models/Candidate";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob"; // ADD THIS IMPORT
+// REMOVING THESE IMPORTS:
+// import { writeFile, mkdir } from "fs/promises";
+// import path from "path";
 
 export async function POST(request) {
   try {
@@ -60,22 +62,14 @@ export async function POST(request) {
     // Score the candidate
     const scoringResult = scoreCandidate(parsedData, job);
 
-    // Save the resume file
-    const bytes = await resume.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
-
-    // Create unique filename
+    // REPLACE THIS ENTIRE SECTION:
+    // Save the resume file to Vercel Blob
     const timestamp = Date.now();
     const fileName = `${timestamp}-${resume.name.replace(/\s+/g, "_")}`;
-    const filePath = path.join(uploadsDir, fileName);
 
-    // Write file
-    await writeFile(filePath, buffer);
-    const fileLocation = `/uploads/${fileName}`;
+    const blob = await put(fileName, resume, {
+      access: "public",
+    });
 
     // Create candidate in database
     const candidate = new Candidate({
@@ -91,7 +85,7 @@ export async function POST(request) {
       status: "applied",
       // Resume file info
       resumeFileName: resume.name,
-      resumeFileLocation: fileLocation,
+      resumeFileLocation: blob.url, // CHANGED: Use blob URL instead of local path
     });
 
     await candidate.save();

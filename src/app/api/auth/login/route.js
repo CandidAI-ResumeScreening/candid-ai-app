@@ -43,7 +43,7 @@ export async function POST(request) {
       email: user.email,
     };
 
-    // Create response with updated cookie settings for production
+    // Create response
     const response = NextResponse.json(
       {
         success: true,
@@ -53,14 +53,12 @@ export async function POST(request) {
       { status: 200 }
     );
 
-    // Set cookie with production-friendly settings
-    const isProduction = process.env.NODE_ENV === "production";
-
+    // ONLY CHANGE: Set cookie with better settings for Vercel
     response.cookies.set("token", token, {
       path: "/",
       httpOnly: true,
-      secure: isProduction, // Use secure cookies in production
-      sameSite: isProduction ? "none" : "lax", // Allow cross-site cookies in production
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60, // 7 days
     });
 

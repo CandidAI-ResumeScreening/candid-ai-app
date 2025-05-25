@@ -27,49 +27,6 @@ const useUserStore = create(
           user: null,
           isLoggedIn: false,
         }),
-
-      // Validate token with backend
-      validateToken: async () => {
-        try {
-          const response = await fetch("/api/auth/validate", {
-            method: "GET",
-            credentials: "include", // Important: include cookies
-          });
-
-          if (!response.ok) {
-            // Token is invalid, clear user
-            const state = get();
-            state.clearUser();
-            return false;
-          }
-
-          const data = await response.json();
-          if (data.success && data.user) {
-            // Update user data with fresh info from server
-            const state = get();
-            state.setUser(data.user);
-            return true;
-          }
-
-          return false;
-        } catch (error) {
-          console.error("Token validation error:", error);
-          const state = get();
-          state.clearUser();
-          return false;
-        }
-      },
-
-      // Initialize authentication (call this on app startup)
-      initializeAuth: async () => {
-        const state = get();
-        if (state.user && state.isLoggedIn) {
-          // Validate existing token
-          const isValid = await state.validateToken();
-          return isValid;
-        }
-        return false;
-      },
     }),
     {
       name: "user-storage", // unique name

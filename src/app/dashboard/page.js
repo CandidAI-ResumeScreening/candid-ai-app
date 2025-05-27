@@ -23,7 +23,6 @@ export default function DashboardPage() {
     setIsClient(true);
   }, []);
 
-  // Always render the same basic structure
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
@@ -70,7 +69,7 @@ export default function DashboardPage() {
               </button>
             </div>
           ) : (
-            // Authenticated - show content
+            // If Authenticated - show content
             <>
               {/* Welcome Message and Stats */}
               <div className="bg-white shadow-sm rounded-lg p-6">

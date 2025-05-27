@@ -3,12 +3,12 @@ import { AzureOpenAI } from "openai";
 import { NextResponse } from "next/server";
 
 // Azure OpenAI configuration
-// const endpoint = "https://moham-m9sirgg0-eastus2.cognitiveservices.azure.com/";
 const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
 const modelName = "gpt-4o";
 const deployment = "gpt-4o";
 const apiVersion = "2024-04-01-preview";
 
+// Job creation with AI description generation
 export async function POST(request) {
   try {
     const { prompt } = await request.json();

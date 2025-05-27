@@ -123,7 +123,7 @@ export default function JobApplyPage({ params }) {
       setSubmitError(null);
       setApplicationSuccess(null);
 
-      // Step 1: Parse the resume with the parse API
+      //Parse the resume with the parse API
       const parseFormData = new FormData();
       parseFormData.append("resume", file);
 

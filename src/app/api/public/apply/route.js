@@ -1,11 +1,11 @@
 // src/app/api/public/apply/route.js
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import { scoreCandidate } from "@/lib/scoringModule";
+import { scoreCandidate } from "@/lib/scoringModule2";
 import Job from "@/models/Job";
 import Candidate from "@/models/Candidate";
-import { put } from "@vercel/blob"; // ADD THIS IMPORT
-// REMOVING THESE IMPORTS:
+import { put } from "@vercel/blob"; //  IMPORT FOR BLOB STORAGE
+// NO NEED OF THESE IMPORTS:
 // import { writeFile, mkdir } from "fs/promises";
 // import path from "path";
 

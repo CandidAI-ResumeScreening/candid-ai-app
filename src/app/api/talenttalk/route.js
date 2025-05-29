@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
-import { AzureOpenAI } from "openai";
 
-// Azure OpenAI configuration - reuse same configuration from assistant
-const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-const modelName = "gpt-4o";
-const deployment = "gpt-4o";
-const apiVersion = "2024-04-01-preview";
+// Ngrok chatbot configuration which changes open everytime the machine server is restarted; behaviour of ngrok
+const NGROK_API_URL = "https://e979-34-125-38-55.ngrok-free.app/simple_chat";
 
 export async function POST(request) {
   try {
@@ -20,121 +16,145 @@ export async function POST(request) {
       );
     }
 
-    // Get API key from environment variables
-    const apiKey = process.env.AZURE_OPENAI_API_KEY;
+    // Prepare context information for the chatbot
+    let contextualMessage = message;
 
-    if (!apiKey) {
-      throw new Error("Azure OpenAI API key is not configured");
-    }
-
-    // Initialize Azure OpenAI client
-    const options = { endpoint, apiKey, deployment, apiVersion };
-    const client = new AzureOpenAI(options);
-
-    // Create system prompt for the TalentTalk assistant
-    let systemPrompt = `You are TalentTalk, an AI-powered recruitment assistant for CandidAI.
-
-Your role is to analyze candidate data and provide concise insights about applicants to help HR professionals make better hiring decisions.
-
-Guidelines:
-1. Be concise, formal, and straight to the point in your responses.
-2. Keep responses brief - less than 3 lines whenever possible.
-3. Only provide insights based on the candidate data provided. If a question is outside this scope, respond with "Insight Not Found".
-4. Do not use numbering, markdown, headers, bullet points, bold text, or italics in your responses. 
-5. Just Use only plain text in block paragraphs.
-6. Focus on providing data-driven insights about candidates' skills, experience, education, and other relevant qualifications.
-7. When comparing candidates, be objective and highlight strengths and potential areas for improvement.
-8. If no candidate data matches the query or if the information is insufficient, respond with "Insight Not Found".
-9. Avoid asterisks, double quotes, or any other special characters in your responses.
-10. You are allowed to respond to greetings or salutations.
-`;
-
-    // Add context-specific instructions
+    // Add context-specific information to the message
     if (contextType === "jobSpecific" && jobDetails) {
-      systemPrompt += `\n\nYou are currently analyzing candidates specifically for the "${
+      const jobContext = `Context: Analyzing candidates for "${
         jobDetails.title
-      }" position at ${jobDetails.companyName}. 
-      The job requires: ${jobDetails.skills.join(", ")}. 
-      Experience level: ${jobDetails.experienceLevel}, ${
-        jobDetails.yearsOfExperience
-      } years. 
-      Education: ${jobDetails.educationLevel}${
+      }" position at ${
+        jobDetails.companyName
+      }. Required skills: ${jobDetails.skills.join(", ")}. Experience: ${
+        jobDetails.experienceLevel
+      }, ${jobDetails.yearsOfExperience} years. Education: ${
+        jobDetails.educationLevel
+      }${
         jobDetails.fieldOfStudy !== "Not specified"
           ? ` in ${jobDetails.fieldOfStudy}`
           : ""
-      }.
-      Location: ${jobDetails.location}.`;
-    } else {
-      systemPrompt +=
-        "\n\nYou are currently analyzing all candidates across different job positions.";
+      }. Location: ${jobDetails.location}. `;
+
+      contextualMessage = jobContext + "User query: " + message;
     }
 
-    // Add all candidates data (but limit size)
-    const candidateData = candidates.map((candidate) => {
-      // Extract essential fields to avoid too large contexts
-      return {
-        id: candidate._id,
-        name: candidate.Name,
-        email: candidate.Email,
-        phone: candidate.Phone,
-        jobRole: candidate["Job Role"],
-        experienceLevel: candidate["Experience level"],
-        skills: candidate.Skills,
-        rawText: candidate.rawResumeText,
-        education: candidate["Education Details"],
-        experience: candidate["Experience Details"],
-        certifications: candidate.Certification,
-        jobTitle: candidate.jobTitle,
-        score: candidate.score,
-        thresholdPass: candidate.thresholdPass,
-        status: candidate.status,
-      };
-    });
-
-    systemPrompt += `\n\nHere is the candidate data you can reference:\n${JSON.stringify(
-      candidateData,
-      null,
-      2
-    )}`;
-
-    // Format conversation history for the API
-    const formattedConversation = conversation.map((msg) => ({
-      role: msg.role === "user" ? "user" : "assistant",
-      content: msg.content,
+    // Add candidate data context
+    const candidateContext = candidates.map((candidate) => ({
+      id: candidate._id,
+      name: candidate.Name,
+      email: candidate.Email,
+      jobRole: candidate["Job Role"],
+      experienceLevel: candidate["Experience level"],
+      skills: candidate.Skills,
+      education: candidate["Education Details"],
+      experience: candidate["Experience Details"],
+      certifications: candidate.Certification,
+      score: candidate.score,
+      thresholdPass: candidate.thresholdPass,
+      status: candidate.status,
     }));
 
-    // Send request to Azure OpenAI
-    const response = await client.chat.completions.create({
-      messages: [
-        { role: "system", content: systemPrompt },
-        ...formattedConversation,
-        { role: "user", content: message },
-      ],
-      max_tokens: 300,
-      temperature: 0.5,
-      top_p: 1,
-      model: modelName,
-    });
+    // Include candidate data in the message context
+    const candidateInfo = `Available candidates data: ${JSON.stringify(
+      candidateContext
+    )}. `;
+    contextualMessage = candidateInfo + contextualMessage;
 
-    // Extract the generated response
-    if (response && response.choices && response.choices.length > 0) {
-      const assistantResponse = response.choices[0].message.content.trim();
+    // Add conversation history context if available
+    if (conversation && conversation.length > 0) {
+      const conversationHistory = conversation
+        .slice(-5) // Limit to last 5 messages to avoid large payloads
+        .map((msg) => `${msg.role}: ${msg.content}`)
+        .join(" | ");
+      contextualMessage = `Previous conversation: ${conversationHistory}. Current query: ${contextualMessage}`;
+    }
 
+    try {
+      // Calling the ngrok chatbot API
+      const response = await fetch(NGROK_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_input: contextualMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Ngrok chatbot response received:", data);
+
+      // Handle successful response
+      if (data.reply) {
+        return NextResponse.json({
+          success: true,
+          response: data.reply,
+        });
+      }
+
+      // Handle Ollama error with fallback
+      if (data.ollama_error) {
+        console.warn("Ollama error encountered:", data.ollama_error);
+
+        return NextResponse.json({
+          success: true,
+          response: "Error: No insights found",
+        });
+      }
+
+      // If no reply or error, use default error message
       return NextResponse.json({
         success: true,
-        response: assistantResponse,
+        response: "Error: No insights found",
       });
-    } else {
-      throw new Error("Failed to generate response");
+    } catch (fetchError) {
+      console.error("Error calling ngrok chatbot:", fetchError);
+
+      // Fallback response for network/API errors
+      return NextResponse.json({
+        success: true,
+        response: "Error: No insights found",
+      });
     }
   } catch (error) {
     console.error("Error with TalentTalk:", error);
+
+    // Return the standard error message for any other errors
     return NextResponse.json(
       {
-        success: false,
-        message: "Failed to process your request: " + error.message,
+        success: true,
+        response: "Error: No insights found",
       },
-      { status: 500 }
-    );
+      { status: 200 }
+    ); // Keep status 200 for backward compatibility
   }
 }
+
+// Add a fallback function for generating simple responses
+const generateFallbackResponse = (input) => {
+  const userInput = input.toLowerCase();
+
+  // Simple response mapping as backup
+  if (userInput.includes("hello") || userInput.includes("hi")) {
+    return "Hello! I'm here to help with your HR needs. How can I assist you with candidate evaluation today?";
+  }
+
+  if (userInput.includes("candidate") || userInput.includes("resume")) {
+    return "I can help analyze candidate profiles and resumes. Would you like me to evaluate specific candidates or discuss general recruitment strategies?";
+  }
+
+  if (userInput.includes("job") || userInput.includes("position")) {
+    return "I can assist with job matching and position requirements analysis. What specific role are you looking to fill?";
+  }
+
+  if (userInput.includes("skill") || userInput.includes("experience")) {
+    return "Skills and experience evaluation is my specialty. I can identify talent with the right capabilities for your open positions.";
+  }
+
+  // Default response
+  return "Error: No insights found";
+};

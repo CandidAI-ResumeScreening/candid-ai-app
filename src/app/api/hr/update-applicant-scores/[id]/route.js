@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import User from "@/models/User";
 import Job from "@/models/Job";
 import Candidate from "@/models/Candidate";
-import { scoreCandidate } from "@/lib/scoringModule";
+import { scoreCandidate } from "@/lib/scoringModule2";
 
 // Get user from JWT token
 const getUserFromToken = async (token) => {

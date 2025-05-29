@@ -1,7 +1,7 @@
 // src/app/api/public/apply/route.js
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import { scoreCandidate } from "@/lib/scoringModule";
+import { scoreCandidate } from "@/lib/scoringModule2";
 import Job from "@/models/Job";
 import Candidate from "@/models/Candidate";
 import { writeFile, mkdir } from "fs/promises";
